@@ -10,9 +10,9 @@ public partial class HomePage : ContentPage
 		InitializeComponent();
     }
 
-    private async Task OnScrolled(object sender, ScrolledEventArgs e)
+    private async Task OnScrolled(object sender, ItemsViewScrolledEventArgs e)
     {
-        double currentScrollY = e.ScrollY;
+        double currentScrollY = e.VerticalOffset;
         if (currentScrollY > lastScrollY +5 && !isBarHidden) // +5 to add a small threshold before hiding the bar
         {
             isBarHidden = true;

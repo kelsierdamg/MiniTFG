@@ -20,16 +20,43 @@
             </Border>
         </Grid>
 
-        <ScrollView x:Name="MainScroll"
-                    Grid.Row="1"
-                    Scrolled="OnScrolled">
-            <VerticalStackLayout Spacing="20" Padding="30">
-                <Label 
-                    Text="Aquí aparecerán las recetas"
-                    VerticalOptions="Center" 
-                    HorizontalOptions="Center" />
-            </VerticalStackLayout>
-        </ScrollView>
+
+        <CollectionView ItemsSource="{Binding Recetas}"
+                        x:Name="ListaRecetas"
+                        Grid.Row="1"
+                        Scrolled="OnScrolled">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Border
+                        StrokeThickness="0"
+                        BackgroundColor="#9C40F7"
+                        StrokeShape="RoundRectangle 15"
+                        Padding="10"
+                        Margin="0,10"
+                        HeightRequest="120">
+                        <Grid ColumnDefinitions="120, *">
+                            <Image Grid.Column="0"
+                                   Source="{Binding Imagen}"
+                                   Aspect="AspectFill"
+                                   HeightRequest="100"
+                                   WidthRequest="100" />
+                            
+                            <VerticalStackLayout Grid.Column="1" Padding="10,0" Spacing="4">
+                                <Label Text="{Binding Nombre}"
+                                       FontAttributes="Bold"
+                                       FontSize="18" />
+
+                                <Label Text="{Binding Comensales, StringFormat='Comensales: {0}'}" />
+                                <Label Text="{Binding Tiempo, StringFormat='Tiempo: {0} min'}" />
+                                <Label Text="{Binding Cocina, StringFormat='Cocina: {0}'}" />
+                                <Label Text="{Binding Origen, StringFormat='Origen: {0}'}" />
+                                <Label Text="{Binding IngredientesPrincipales}" LineBreakMode="TailTruncation" />
+                            </VerticalStackLayout>
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
 
         <Grid x:Name="BottomBar"
               Grid.Row="2"
