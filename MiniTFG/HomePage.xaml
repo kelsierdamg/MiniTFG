@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MiniTFG.HomePage"
+             NavigationPage.HasNavigationBar="False">
+    <Grid RowDefinitions="Auto,*,Auto">
+
+        <Grid BackgroundColor="#9C40F7"
+              Padding="10"
+              Grid.Row="0"
+              VerticalOptions="Start">
+            <Border StrokeThickness="0"
+                    StrokeShape="RoundRectangle 20"
+                    BackgroundColor="#EEEEEE"
+                    HeightRequest="40"
+                    VerticalOptions="Center">
+                <SearchBar Placeholder="Buscar..."
+                           BackgroundColor="Transparent"
+                           FontSize="18" />
+            </Border>
+        </Grid>
+
+        <ScrollView x:Name="MainScroll"
+                    Grid.Row="1"
+                    Scrolled="OnScrolled">
+            <VerticalStackLayout Spacing="20" Padding="30">
+                <Label 
+                    Text="Aquí aparecerán las recetas"
+                    VerticalOptions="Center" 
+                    HorizontalOptions="Center" />
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <Grid x:Name="BottomBar"
+              Grid.Row="2"
+              BackgroundColor="#9C40F7"
+              HeightRequest="65"
+              Padding="5"
+              ColumnDefinitions="*,*,*"
+              VerticalOptions="End">
+
+            <Button Grid.Column="0"
+                    Text="Inicio"
+                    TextColor="Black"
+                    ImageSource="home.png"
+                    BackgroundColor="#9C40F7"
+                    Clicked="InicioClicked" />
+
+            <Button Grid.Column="1"
+                    Text="Recetas"
+                    TextColor="Black"
+                    ImageSource="recipes.png"
+                    BackgroundColor="#9C40F7"
+                    Clicked="RecetasClicked" />
+
+            <Button Grid.Column="2"
+                    Text="Perfil"
+                    TextColor="Black"
+                    ImageSource="user.png"
+                    BackgroundColor="#9C40F7"
+                    Clicked="PerfilClicked" />
+        </Grid>
+    </Grid>
+</ContentPage>
