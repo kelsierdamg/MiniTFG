@@ -16,7 +16,7 @@ public partial class PreferencesPage : ContentPage
 		BindingContext = this;
     }
 
-	public void FinishClicked(object sender, EventArgs e)
+	private void FinishClicked(object sender, EventArgs e)
 	{
 		Application.Current.MainPage = new NavigationPage(new HomePage());
     }

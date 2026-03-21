@@ -26,5 +26,8 @@ public partial class HomePage : ContentPage
         lastScrollY = currentScrollY;
     }
 
-
+    private void RecetasClicked(object sender, EventArgs e)
+    {
+        Application.Current.MainPage = new NavigationPage(new RecipesPage());
+    }
 }

@@ -29,7 +29,7 @@ public partial class AllergiesPage : ContentPage
         BindingContext = this;
     }
 
-	public void NextClicked(object sender, EventArgs e)
+	private void NextClicked(object sender, EventArgs e)
 	{
 		// Aquí puedes guardar las preferencias seleccionadas en una base de datos o en la configuración de la aplicación
 		// Por ejemplo, podrías usar Preferences.Set("Alergenos", JsonSerializer.Serialize(Alergenos));
