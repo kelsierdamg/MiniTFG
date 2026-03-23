@@ -21,7 +21,7 @@ public partial class NamePage : ContentPage
         }
     }
 
-    public void NextClicked(object sender, EventArgs e)
+    public async void NextClicked(object sender, EventArgs e)
 	{
         if (passwordEntry.Text != passwordRepeatEntry.Text)
         {
@@ -30,7 +30,7 @@ public partial class NamePage : ContentPage
         }
         else
         {
-            Navigation.PushAsync(new AllergiesPage());
+            await Shell.Current.GoToAsync("allergies");
         }
 
         }

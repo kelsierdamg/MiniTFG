@@ -5,6 +5,10 @@
         public AppShell()
         {
             InitializeComponent();
+
+            Routing.RegisterRoute("name", typeof(NamePage));
+            Routing.RegisterRoute("allergies", typeof(AllergiesPage));
+            Routing.RegisterRoute("preferences", typeof(PreferencesPage));
         }
     }
 }

@@ -7,14 +7,14 @@ public partial class LoginPage : ContentPage
 		InitializeComponent();
 	}
 
-	private void GuestClicked(object sender, EventArgs e)
+	private async void GuestClicked(object sender, EventArgs e)
 	{
-		Application.Current.MainPage = new NavigationPage(new HomePage());
+		await Shell.Current.GoToAsync("//home");
     }
 
-    private void CreateClicked(object sender, EventArgs e)
+    private async void CreateClicked(object sender, EventArgs e)
 	{
-		Navigation.PushAsync(new NamePage());
+		await Shell.Current.GoToAsync("name");
     }
 
 	private void ShowCheckedChanged(object sender, CheckedChangedEventArgs e)

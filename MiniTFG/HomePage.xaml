@@ -5,7 +5,8 @@
              NavigationPage.HasNavigationBar="False">
     <Grid RowDefinitions="Auto,*,Auto">
 
-        <Grid BackgroundColor="#9C40F7"
+        <Grid x:Name="TopBar"
+              BackgroundColor="#9C40F7"
               Padding="10"
               Grid.Row="0"
               VerticalOptions="Start">

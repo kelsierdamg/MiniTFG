@@ -5,12 +5,14 @@
              NavigationPage.HasNavigationBar="False">
 
     <Grid RowDefinitions="*, Auto">
-        <VerticalStackLayout Grid.Row="0">
-            <Label 
+        <ScrollView Grid.Row="0" Scrolled="OnScrolled">
+            <VerticalStackLayout>
+                <Label 
                 Text="Welcome to .NET MAUI!"
                 VerticalOptions="Center" 
                 HorizontalOptions="Center" />
-        </VerticalStackLayout>
+            </VerticalStackLayout>
+        </ScrollView>
 
         <Grid x:Name="BottomBar"
               Grid.Row="1"

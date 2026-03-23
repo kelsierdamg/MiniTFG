@@ -16,8 +16,8 @@ public partial class PreferencesPage : ContentPage
 		BindingContext = this;
     }
 
-	private void FinishClicked(object sender, EventArgs e)
+	private async void FinishClicked(object sender, EventArgs e)
 	{
-		Application.Current.MainPage = new NavigationPage(new HomePage());
+		await Shell.Current.GoToAsync("//home");
     }
 }
