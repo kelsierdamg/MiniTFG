@@ -19,4 +19,8 @@
         ContentTemplate="{DataTemplate local:RecipesPage}"
         Route="recipes" />
 
+    <ShellContent
+        ContentTemplate="{DataTemplate local:ProfilePage}"
+        Route="profile" />
+
 </Shell>

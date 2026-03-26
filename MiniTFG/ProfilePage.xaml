@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MiniTFG.ProfilePage"
+             NavigationPage.HasNavigationBar="False">
+    <Grid RowDefinitions="Auto, *, Auto">
+
+        <!-- BANNER -->
+        <Grid Grid.Row="0">
+            <Image x:Name="BannerImage"
+                   Source="banner_default.png"
+                   Aspect="AspectFill"
+                   HeightRequest="180" />
+
+            <!-- FOTO DE PERFIL SUPERPUESTA -->
+            <Frame CornerRadius="60"
+                   HeightRequest="120"
+                   WidthRequest="120"
+                   BackgroundColor="White"
+                   Padding="3"
+                   VerticalOptions="End"
+                   HorizontalOptions="Center"
+                   Margin="0,-60,0,0">
+                <Image x:Name="ProfileImage"
+                       Source="profile_default.png"
+                       Aspect="AspectFill"
+                       Clip="EllipseGeometry Center=60,60 RadiusX=60 RadiusY=60" />
+            </Frame>
+        </Grid>
+
+        <!-- CONTENIDO -->
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="20" Spacing="20">
+
+                <!-- ESTADÍSTICAS -->
+                <HorizontalStackLayout HorizontalOptions="Center" Spacing="40">
+                    <VerticalStackLayout>
+                        <Label Text="Likes"
+                               FontSize="16"
+                               HorizontalOptions="Center" />
+                        <Label x:Name="LikesTotalesLabel"
+                               Text="0"
+                               FontSize="22"
+                               FontAttributes="Bold"
+                               HorizontalOptions="Center" />
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout>
+                        <Label Text="Recetas"
+                               FontSize="16"
+                               HorizontalOptions="Center" />
+                        <Label x:Name="RecetasTotalesLabel"
+                               Text="0"
+                               FontSize="22"
+                               FontAttributes="Bold"
+                               HorizontalOptions="Center" />
+                    </VerticalStackLayout>
+                </HorizontalStackLayout>
+
+                <!-- BOTÓN TIENDA DE SKINS -->
+                <Button Text="Tienda de skins"
+                        BackgroundColor="#9C40F7"
+                        TextColor="White"
+                        CornerRadius="15"
+                        HeightRequest="50"
+                        Clicked="AbrirTiendaClicked" />
+
+                <!-- LISTA DE RECETAS DEL USUARIO -->
+                <VerticalStackLayout x:Name="MisRecetasContainer"
+                                     Spacing="15">
+                    <!-- Aquí se cargarán las recetas del usuario -->
+                </VerticalStackLayout>
+
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <!-- BOTTOM BAR -->
+        <Grid x:Name="BottomBar"
+              Grid.Row="2"
+              BackgroundColor="#9C40F7"
+              HeightRequest="65"
+              Padding="5"
+              ColumnDefinitions="*,*,*">
+
+            <Button Grid.Column="0"
+                    Text="Inicio"
+                    ImageSource="home.png"
+                    BackgroundColor="#9C40F7"
+                    Clicked="InicioClicked" />
+
+            <Button Grid.Column="1"
+                    Text="Recetas"
+                    ImageSource="recipes.png"
+                    BackgroundColor="#9C40F7"
+                    Clicked="RecetasClicked" />
+
+            <Button Grid.Column="2"
+                    Text="Perfil"
+                    ImageSource="user.png"
+                    BackgroundColor="#9C40F7"
+                    Clicked="PerfilClicked" />
+        </Grid>
+
+    </Grid>
+</ContentPage>

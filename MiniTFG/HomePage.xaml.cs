@@ -32,4 +32,9 @@ public partial class HomePage : ContentPage
     {
         await Shell.Current.GoToAsync("//recipes");
     }
+
+    private async void PerfilClicked(object sender, EventArgs e)
+    {
+        await Shell.Current.GoToAsync("//profile");
+    }
 }

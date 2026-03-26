@@ -14,6 +14,11 @@ public partial class RecipesPage : ContentPage
 		await Shell.Current.GoToAsync("//home");
     }
 
+    private async void PerfilClicked(object sender, EventArgs e)
+    {
+        await Shell.Current.GoToAsync("//profile");
+    }
+
     private async void OnScrolled(object sender, ItemsViewScrolledEventArgs e)
     {
         double currentScrollY = e.VerticalOffset;
@@ -29,4 +34,61 @@ public partial class RecipesPage : ContentPage
         }
         lastScrollY = currentScrollY;
     }
+
+    private async void SeleccionarImagenClicked(object sender, EventArgs e)
+    {
+        string opcion = await DisplayActionSheetAsync(
+        "Seleccionar imagen",
+        "Cancelar",
+        null,
+        "Hacer foto",
+        "Elegir de la galería");
+
+        if (opcion == "Hacer foto")
+        {
+            await TomarFoto();
+        }
+        else if (opcion == "Elegir de la galería")
+        {
+            await ElegirDeGaleria();
+        }
+    }
+
+    private async Task TomarFoto()
+    {
+        try
+        {
+            var foto = await MediaPicker.CapturePhotoAsync();
+
+            if (foto != null)
+            {
+                using var stream = await foto.OpenReadAsync();
+                ImagenPreview.Source = ImageSource.FromStream(() => stream);
+            }
+        }
+        catch (Exception ex)
+        {
+            await DisplayAlertAsync("Error", "No se pudo abrir la cámara", "OK");
+        }
+    }
+
+    private async Task ElegirDeGaleria()
+    {
+        try
+        {
+            var foto = await MediaPicker.PickPhotoAsync();
+
+            if (foto != null)
+            {
+                using var stream = await foto.OpenReadAsync();
+                ImagenPreview.Source = ImageSource.FromStream(() => stream);
+            }
+        }
+        catch (Exception ex)
+        {
+            await DisplayAlertAsync("Error", "No se pudo seleccionar la imagen", "OK");
+        }
+    }
+
+
 }

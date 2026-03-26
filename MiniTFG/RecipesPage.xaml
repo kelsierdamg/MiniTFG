@@ -5,12 +5,59 @@
              NavigationPage.HasNavigationBar="False">
 
     <Grid RowDefinitions="*, Auto">
-        <ScrollView Grid.Row="0" Scrolled="OnScrolled">
-            <VerticalStackLayout>
-                <Label 
-                Text="Welcome to .NET MAUI!"
-                VerticalOptions="Center" 
-                HorizontalOptions="Center" />
+        <ScrollView Grid.Row="0"
+                    Scrolled="OnScrolled">
+            <VerticalStackLayout Padding="20" Spacing="20">
+                <Label Text="Crear nueva receta"
+                   FontSize="28"
+                   FontAttributes="Bold"
+                   HorizontalOptions="Center" />
+
+                <Entry x:Name="NombreEntry"
+                   Placeholder="Nombre del plato"
+                   FontSize="18" />
+
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="Imagen del plato" FontAttributes="Bold" />
+                    <Image x:Name="ImagenPreview"
+                       HeightRequest="180"
+                       BackgroundColor="#DDDDDD"
+                       Aspect="AspectFill" />
+                    <Button Text="Seleccionar imagen"
+                            BackgroundColor="#9C40F7"
+                            Clicked="SeleccionarImagenClicked" />
+                </VerticalStackLayout>
+
+                <Entry x:Name="ComensalesEntry"
+                   Placeholder="Comensales (ej: 4)"
+                   Keyboard="Numeric" />
+
+                <Entry x:Name="TiempoEntry"
+                   Placeholder="Tiempo (minutos)"
+                   Keyboard="Numeric" />
+
+                <Picker x:Name="CocinaPicker"
+                    Title="Tipo de cocina">
+                    <Picker.Items>
+                        <x:String>Vitro</x:String>
+                        <x:String>Horno</x:String>
+                        <x:String>Microondas</x:String>
+                        <x:String>Fuego</x:String>
+                    </Picker.Items>
+                </Picker>
+
+                <Entry x:Name="OrigenEntry"
+                       Placeholder="Origen del plato (ej: Italia)" />
+
+                <Entry x:Name="MainIngredientEntry"
+                       Placeholder="Ingrediente principal (ej: Pollo)" />
+
+                <Button Text="Guardar receta"
+                        BackgroundColor="#9C40F7"
+                        TextColor="White"
+                        CornerRadius="10"
+                        HeightRequest="50"
+                        Clicked="GuardarRecetaClicked" />
             </VerticalStackLayout>
         </ScrollView>
 
