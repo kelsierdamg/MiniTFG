@@ -8,8 +8,7 @@
         <Grid x:Name="TopBar"
               BackgroundColor="#9C40F7"
               Padding="10"
-              Grid.Row="0"
-              VerticalOptions="Start">
+              Grid.Row="0">
             <Border StrokeThickness="0"
                     StrokeShape="RoundRectangle 20"
                     BackgroundColor="#EEEEEE"
@@ -52,6 +51,22 @@
                                 <Label Text="{Binding Cocina, StringFormat='Cocina: {0}'}" />
                                 <Label Text="{Binding Origen, StringFormat='Origen: {0}'}" />
                                 <Label Text="{Binding IngredientesPrincipales}" LineBreakMode="TailTruncation" />
+
+                                <HorizontalStackLayout Spacing="15" Margin="0,5,0,0">
+                                    <!-- BOTÓN DE LIKE -->
+                                    <ImageButton Source="heart.png"
+                                                 HeightRequest="28"
+                                                 WidthRequest="28"
+                                                 BackgroundColor="Transparent"
+                                                 Clicked="LikeClicked" />
+
+                                    <!-- BOTÓN DE PUNTUAR -->
+                                    <ImageButton Source="star.png"
+                                                 HeightRequest="28"
+                                                 WidthRequest="28"
+                                                 BackgroundColor="Transparent"
+                                                 Clicked="PuntuarClicked" />
+                                </HorizontalStackLayout>
                             </VerticalStackLayout>
                         </Grid>
                     </Border>

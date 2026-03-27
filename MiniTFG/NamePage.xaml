@@ -12,6 +12,7 @@
 
         <Entry
             Placeholder="Nombre" 
+            x:Name="nameEntry"
             FontSize="18"
             BackgroundColor="#EEEEEE"
             HeightRequest="60"
@@ -20,6 +21,7 @@
 
         <Entry
             Placeholder="Correo electrónico" 
+            x:Name="emailEntry"
             FontSize="18"
             BackgroundColor="#EEEEEE"
             HeightRequest="60"

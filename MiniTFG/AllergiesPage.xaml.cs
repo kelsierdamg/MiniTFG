@@ -13,7 +13,7 @@ public partial class AllergiesPage : ContentPage
 			new AlergenosPreferencias { Nombre = "Gluten", Seleccion = false },
 			new AlergenosPreferencias { Nombre = "Leche", Seleccion = false },
 			new AlergenosPreferencias { Nombre = "Frutos secos", Seleccion = false },
-			new AlergenosPreferencias { Nombre = "Mariscos", Seleccion = false },
+			new AlergenosPreferencias { Nombre = "Marisco", Seleccion = false },
 			new AlergenosPreferencias { Nombre = "Huevos", Seleccion = false },
 			new AlergenosPreferencias { Nombre = "Soja", Seleccion = false },
 			new AlergenosPreferencias { Nombre = "Pescado", Seleccion = false },
@@ -31,9 +31,67 @@ public partial class AllergiesPage : ContentPage
 
 	private async void NextClicked(object sender, EventArgs e)
 	{
-		// Aquí puedes guardar las preferencias seleccionadas en una base de datos o en la configuración de la aplicación
-		// Por ejemplo, podrías usar Preferences.Set("Alergenos", JsonSerializer.Serialize(Alergenos));
-		// Luego, navega a la siguiente página
-		await Shell.Current.GoToAsync("preferences");
+        foreach (var item in Alergenos)
+        {
+            switch (item.Nombre)
+            {
+                case "Gluten":
+                    App.UsuarioTemporal.Gluten = item.Seleccion;
+                    break;
+
+                case "Leche":
+                    App.UsuarioTemporal.Lactosa = item.Seleccion;
+                    break;
+
+                case "Frutos secos":
+                    App.UsuarioTemporal.FrutosSecos = item.Seleccion;
+                    break;
+
+                case "Mariscos":
+                    App.UsuarioTemporal.Marisco = item.Seleccion;
+                    break;
+
+                case "Huevos":
+                    App.UsuarioTemporal.Huevo = item.Seleccion;
+                    break;
+
+                case "Soja":
+                    App.UsuarioTemporal.Soja = item.Seleccion;
+                    break;
+
+                case "Pescado":
+                    App.UsuarioTemporal.Pescado = item.Seleccion;
+                    break;
+
+                case "Cacahuetes":
+                    App.UsuarioTemporal.Cacahuetes = item.Seleccion;
+                    break;
+
+                case "Sésamo":
+                    App.UsuarioTemporal.Sesamo = item.Seleccion;
+                    break;
+
+                case "Sulfitos":
+                    App.UsuarioTemporal.Sulfitos = item.Seleccion;
+                    break;
+
+                case "Mostaza":
+                    App.UsuarioTemporal.Mostaza = item.Seleccion;
+                    break;
+
+                case "Altramuces":
+                    App.UsuarioTemporal.Altramuces = item.Seleccion;
+                    break;
+
+                case "Moluscos":
+                    App.UsuarioTemporal.Moluscos = item.Seleccion;
+                    break;
+
+                case "Apio":
+                    App.UsuarioTemporal.Apio = item.Seleccion;
+                    break;
+            }
+        }
+        await Shell.Current.GoToAsync("preferences");
     }
 }

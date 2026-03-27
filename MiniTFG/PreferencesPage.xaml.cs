@@ -18,6 +18,42 @@ public partial class PreferencesPage : ContentPage
 
 	private async void FinishClicked(object sender, EventArgs e)
 	{
-		await Shell.Current.GoToAsync("//home");
+		foreach (var item in Preferencias)
+		{
+			switch (item.Nombre)
+			{
+				case "Vegetariano":
+					App.UsuarioTemporal.Vegetariano = item.Seleccion;
+					break;
+				case "Vegano":
+					App.UsuarioTemporal.Vegano = item.Seleccion;
+					break;
+			}
+        }
+
+        var api = new ApiService();
+
+        var creado = await api.PostUsuarioAsync(App.UsuarioTemporal);
+
+        if (creado == null)
+        {
+            await DisplayAlertAsync("Error", "No se pudo crear la cuenta", "OK");
+            return;
+        }
+
+        var usuarioLogueado = await api.LoginAsync(
+            App.UsuarioTemporal.Correo,
+            App.UsuarioTemporal.Contrasena
+        );
+
+        if (usuarioLogueado == null)
+        {
+            await DisplayAlertAsync("Error", "La cuenta se creó, pero no se pudo iniciar sesión", "OK");
+            return;
+        }
+
+        App.UsuarioActual = usuarioLogueado;
+
+        await Shell.Current.GoToAsync("//home");
     }
 }

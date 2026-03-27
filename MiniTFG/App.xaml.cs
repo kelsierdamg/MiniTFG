@@ -4,6 +4,9 @@ namespace MiniTFG
 {
     public partial class App : Application
     {
+        public static Usuario UsuarioTemporal { get; set; }
+        public static Usuario UsuarioActual { get; set; }
+
         public App()
         {
             InitializeComponent();

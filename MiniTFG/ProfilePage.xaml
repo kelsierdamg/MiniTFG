@@ -57,6 +57,8 @@
                     </VerticalStackLayout>
                 </HorizontalStackLayout>
 
+                <HorizontalStackLayout x:Name="EstrellasContainer" Spacing="4" HorizontalOptions="Center" />
+
                 <!-- BOTÓN TIENDA DE SKINS -->
                 <Button Text="Tienda de skins"
                         BackgroundColor="#9C40F7"

@@ -35,6 +35,22 @@ public partial class HomePage : ContentPage
 
     private async void PerfilClicked(object sender, EventArgs e)
     {
+        if (App.UsuarioActual == null)
+        {
+            bool irLogin = await DisplayAlertAsync(
+                "Inicia sesión",
+                "Para acceder a tu perfil necesitas iniciar sesión.",
+                "Iniciar sesión",
+                "Cancelar"
+            );
+
+            if (irLogin)
+            {
+                await Shell.Current.GoToAsync("//login");
+            }
+
+            return;
+        }
         await Shell.Current.GoToAsync("//profile");
     }
 }

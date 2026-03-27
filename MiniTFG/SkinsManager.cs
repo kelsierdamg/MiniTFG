@@ -20,7 +20,7 @@ namespace MiniTFG
             new Skin { Id = "Foto1", Image = "heisenberg.jpg", Precio = 150, Comprado = false },
             new Skin { Id = "Foto2", Image = "sanji.jpg", Precio = 250, Comprado = false },
             new Skin { Id = "Foto3", Image = "house.jpg", Precio = 350, Comprado = false },
-            new Skin { Id = "Foto4", Image = "arguiñano.jpg", Precio = 450, Comprado = false },
+            new Skin { Id = "Foto4", Image = "arguinano.jpg", Precio = 450, Comprado = false },
             new Skin { Id = "Foto5", Image = "chicote.jpg", Precio = 550, Comprado = false }
         };
     }

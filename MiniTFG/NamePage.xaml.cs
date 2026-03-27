@@ -25,13 +25,20 @@ public partial class NamePage : ContentPage
 	{
         if (passwordEntry.Text != passwordRepeatEntry.Text)
         {
-            DisplayAlert("Error", "Las contraseñas no coinciden", "OK");
+            await DisplayAlertAsync("Error", "Las contraseñas no coinciden", "OK");
             return;
         }
         else
         {
+            App.UsuarioTemporal = new Usuario
+            {
+                Nombre = nameEntry.Text,
+                Correo = emailEntry.Text,
+                Contrasena = passwordEntry.Text
+            };
+
             await Shell.Current.GoToAsync("allergies");
         }
 
-        }
+    }
 }

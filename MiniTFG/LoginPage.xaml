@@ -11,7 +11,8 @@
             HorizontalOptions="Center" />
         
         <Entry 
-            Placeholder="Usuario" 
+            Placeholder="Correo" 
+            x:Name="emailEntry"
             FontSize="18"
             BackgroundColor="#EEEEEE"
             HeightRequest="60"
@@ -60,6 +61,8 @@
         
         <Button
             Text="Iniciar sesión"
+            x:Name="btnSession"
+            Clicked="SessionClicked"
             HeightRequest="50"
             CornerRadius="0"
             BackgroundColor="#9C40F7"
