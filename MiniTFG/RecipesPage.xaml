@@ -14,11 +14,11 @@
                    HorizontalOptions="Center" />
 
                 <Entry x:Name="NombreEntry"
-                   Placeholder="Nombre del plato"
-                   FontSize="18" />
+                       Placeholder="Nombre del plato"
+                       FontSize="18" />
 
                 <VerticalStackLayout Spacing="10">
-                    <Label Text="Imagen del plato" FontAttributes="Bold" />
+                    <Label Text="Imagen del plato" FontAttributes="Bold" FontSize="18" />
                     <Image x:Name="ImagenPreview"
                        HeightRequest="180"
                        BackgroundColor="#DDDDDD"
@@ -29,15 +29,16 @@
                 </VerticalStackLayout>
 
                 <Entry x:Name="ComensalesEntry"
-                   Placeholder="Comensales (ej: 4)"
-                   Keyboard="Numeric" />
+                       Placeholder="Comensales (ej: 4)"
+                       FontSize="18"
+                       Keyboard="Numeric" />
 
                 <Entry x:Name="TiempoEntry"
-                   Placeholder="Tiempo (minutos)"
-                   Keyboard="Numeric" />
+                       Placeholder="Tiempo (minutos)"
+                       FontSize="18"
+                       Keyboard="Numeric" />
 
-                <Picker x:Name="CocinaPicker"
-                    Title="Tipo de cocina">
+                <Picker x:Name="CocinaPicker" Title="Tipo de cocina" FontSize="18">
                     <Picker.Items>
                         <x:String>Vitro</x:String>
                         <x:String>Horno</x:String>
@@ -47,10 +48,36 @@
                 </Picker>
 
                 <Entry x:Name="OrigenEntry"
-                       Placeholder="Origen del plato (ej: Italia)" />
+                       Placeholder="Origen del plato (ej: Italia)"
+                       FontSize="18" />
 
                 <Entry x:Name="MainIngredientEntry"
-                       Placeholder="Ingrediente principal (ej: Pollo)" />
+                       Placeholder="Ingrediente principal (ej: Pollo)"
+                       FontSize="18" />
+
+                <Label Text="¿Contiene este alérgeno?" FontAttributes="Bold" VerticalOptions="Center" FontSize="18" />
+                <CollectionView ItemsSource="{Binding Alergenos}">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <HorizontalStackLayout Spacing="10" Padding="10">
+                                <CheckBox IsChecked="{Binding Seleccion}" VerticalOptions="Center" />
+                                <Label Text="{Binding Nombre}" FontSize="18" VerticalOptions="Center" />
+                            </HorizontalStackLayout>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+
+                <Label Text="¿Es apto para esta preferencia?" FontAttributes="Bold" VerticalOptions="Center" FontSize="18" />
+                <CollectionView ItemsSource="{Binding Preferencias}">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <HorizontalStackLayout Spacing="10" Padding="10">
+                                <CheckBox IsChecked="{Binding Seleccion}" VerticalOptions="Center" />
+                                <Label Text="{Binding Nombre}" FontSize="18" VerticalOptions="Center" />
+                            </HorizontalStackLayout>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
 
                 <Button Text="Guardar receta"
                         BackgroundColor="#9C40F7"
