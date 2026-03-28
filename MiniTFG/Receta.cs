@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.Json.Serialization;
 
 namespace MiniTFG
 {
@@ -11,6 +12,10 @@ namespace MiniTFG
         public string Titulo { get; set; }
         public string Descripcion { get; set; }
         public string Imagen { get; set; }
+
+        [JsonIgnore] // para que no se envíe a la API
+        public ImageSource ImagenSource { get; set; }
+
         public int Comensales { get; set; }
         public string OrigenDelPlato { get; set; }
         public string TiempoPreparacion { get; set; }

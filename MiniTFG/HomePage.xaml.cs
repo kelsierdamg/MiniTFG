@@ -1,13 +1,19 @@
+using System.Collections.ObjectModel;
+
 namespace MiniTFG;
 
 public partial class HomePage : ContentPage
 {
+    public ObservableCollection<Receta> Recetas { get; set; } = new();
+
     double lastScrollY = 0;
     bool isBarHidden = false;
 
     public HomePage()
 	{
 		InitializeComponent();
+        BindingContext = this;
+        CargarRecetas();
     }
 
     private async void OnScrolled(object sender, ItemsViewScrolledEventArgs e)
@@ -27,6 +33,31 @@ public partial class HomePage : ContentPage
         }
         lastScrollY = currentScrollY;
     }
+
+    private async void CargarRecetas()
+    {
+        var api = new ApiService();
+        var lista = await api.GetRecetasAsync();
+
+        if (lista == null)
+            return;
+
+        Recetas.Clear();
+
+        foreach (var r in lista)
+        {
+            // Convertir Base64 a ImageSource
+            if (!string.IsNullOrEmpty(r.Imagen))
+            {
+                byte[] bytes = Convert.FromBase64String(r.Imagen);
+                r.Imagen = null; // evitamos usar el string enorme como Source
+                r.ImagenSource = ImageSource.FromStream(() => new MemoryStream(bytes));
+            }
+
+            Recetas.Add(r);
+        }
+    }
+
 
     private async void RecetasClicked(object sender, EventArgs e)
     {

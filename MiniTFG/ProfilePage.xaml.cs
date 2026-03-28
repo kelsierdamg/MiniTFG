@@ -1,14 +1,22 @@
 using Microsoft.Maui.Controls.Shapes;
+using Org.Apache.Http.Authentication;
+using System.Collections.ObjectModel;
 
 namespace MiniTFG;
 
 public partial class ProfilePage : ContentPage
 {
-	public ProfilePage()
+    public ObservableCollection<Receta> MisRecetas { get; set; } = new();
+    double lastScrollY = 0;
+    bool isBarHidden = false;
+    public ProfilePage()
 	{
 		InitializeComponent();
+        UsernameLabel.BindingContext = App.UsuarioActual;
+        ListaMisRecetas.BindingContext = this;
+        CargarRecetas();
 
-       // double media = PerfilManager.ObtenerMedia(usuarioId);
+        // double media = PerfilManager.ObtenerMedia(usuarioId);
         //MostrarEstrellas(media);
 
     }
@@ -25,6 +33,43 @@ public partial class ProfilePage : ContentPage
 	private async void AbrirTiendaClicked(object sender, EventArgs e)
 	{
 		await Shell.Current.GoToAsync("shop");
+    }
+
+    private async void OnScrolled(object sender, ItemsViewScrolledEventArgs e)
+    {
+        double currentScrollY = e.VerticalOffset;
+        if (currentScrollY > lastScrollY + 5 && !isBarHidden) // +5 to add a small threshold before hiding the bar
+        {
+            isBarHidden = true;
+            await BottomBar.TranslateToAsync(0, 80, 250, Easing.CubicIn); // x, y, duration, easing
+        }
+        else if (currentScrollY < lastScrollY - 5 && isBarHidden) // -5 to add a small threshold before showing the bar again
+        {
+            isBarHidden = false;
+            await BottomBar.TranslateToAsync(0, 0, 250, Easing.CubicOut); // x, y, duration, easing
+        }
+        lastScrollY = currentScrollY;
+    }
+
+    private async void CargarRecetas()
+    {
+        var api = new ApiService();
+        var lista = await api.GetRecetasAsync();
+
+        if (lista == null)
+            return;
+        MisRecetas.Clear();
+        foreach (var mia in lista)
+        {
+            if (mia.UsuarioId == App.UsuarioActual.Id)
+                if (!string.IsNullOrEmpty(mia.Imagen))
+                {
+                    byte[] bytes = Convert.FromBase64String(mia.Imagen);
+                    mia.Imagen = null; // evitamos usar el string enorme como Source
+                    mia.ImagenSource = ImageSource.FromStream(() => new MemoryStream(bytes));
+                }
+            MisRecetas.Add(mia);
+        }
     }
 
     private Grid CrearEstrella(double porcentaje)

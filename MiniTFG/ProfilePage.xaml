@@ -31,48 +31,50 @@
         <!-- CONTENIDO -->
         <ScrollView Grid.Row="1">
             <VerticalStackLayout Padding="20" Spacing="20">
-
-                <!-- ESTADÍSTICAS -->
-                <HorizontalStackLayout HorizontalOptions="Center" Spacing="40">
-                    <VerticalStackLayout>
-                        <Label Text="Likes"
-                               FontSize="16"
-                               HorizontalOptions="Center" />
-                        <Label x:Name="LikesTotalesLabel"
-                               Text="0"
-                               FontSize="22"
-                               FontAttributes="Bold"
-                               HorizontalOptions="Center" />
-                    </VerticalStackLayout>
-
-                    <VerticalStackLayout>
-                        <Label Text="Recetas"
-                               FontSize="16"
-                               HorizontalOptions="Center" />
-                        <Label x:Name="RecetasTotalesLabel"
-                               Text="0"
-                               FontSize="22"
-                               FontAttributes="Bold"
-                               HorizontalOptions="Center" />
-                    </VerticalStackLayout>
-                </HorizontalStackLayout>
+                <Label x:Name="UsernameLabel"
+                       Text="{Binding Nombre}"
+                       FontSize="24"
+                       FontAttributes="Bold"
+                       HorizontalOptions="Center"
+                       Margin="0,0,0,10" />
 
                 <HorizontalStackLayout x:Name="EstrellasContainer" Spacing="4" HorizontalOptions="Center" />
 
-                <!-- BOTÓN TIENDA DE SKINS -->
                 <Button Text="Tienda de skins"
                         BackgroundColor="#9C40F7"
                         TextColor="White"
                         CornerRadius="15"
                         HeightRequest="50"
                         Clicked="AbrirTiendaClicked" />
+                
+                <Label Text="Mis recetas"
+                       FontSize="20"
+                       HorizontalOptions="Center" />
 
-                <!-- LISTA DE RECETAS DEL USUARIO -->
-                <VerticalStackLayout x:Name="MisRecetasContainer"
-                                     Spacing="15">
-                    <!-- Aquí se cargarán las recetas del usuario -->
-                </VerticalStackLayout>
+                <CollectionView ItemsSource="{Binding MisRecetas}" x:Name="ListaMisRecetas" Scrolled="OnScrolled">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Border StrokeThickness="0" BackgroundColor="#9C40F7" StrokeShape="RoundRectangle 15" Padding="10" HeightRequest="250">
+                                <Grid ColumnDefinitions="Auto, *">
+                                    <Image Grid.Column="0"
+                                           Source="{Binding ImagenSource}"
+                                           Aspect="AspectFill"
+                                           HeightRequest="200"
+                                           WidthRequest="200" />
 
+                                    <VerticalStackLayout Grid.Column="1" Padding="10,0" Spacing="4">
+                                        <Label Text="{Binding Titulo}" FontAttributes="Bold" TextColor="White" FontSize="18" />
+                                        <Label Text="{Binding Comensales, StringFormat='Comensales: {0}'}" TextColor="White"/>
+                                        <Label Text="{Binding TiempoPreparacion, StringFormat='Tiempo: {0} min'}" TextColor="White" />
+                                        <Label Text="{Binding TipoCocina, StringFormat='Cocina: {0}'}" TextColor="White" />
+                                        <Label Text="{Binding OrigenDelPlato, StringFormat='Origen: {0}'}" TextColor="White" />
+                                        <Label Text="{Binding IngredientePrincipal, StringFormat='Ingrediente principal: {0}'}" LineBreakMode="WordWrap" TextColor="White" />
+                                    </VerticalStackLayout>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
             </VerticalStackLayout>
         </ScrollView>
 

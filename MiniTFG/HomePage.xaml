@@ -21,36 +21,24 @@
         </Grid>
 
 
-        <CollectionView ItemsSource="{Binding Recetas}"
-                        x:Name="ListaRecetas"
-                        Grid.Row="1"
-                        Scrolled="OnScrolled">
+        <CollectionView ItemsSource="{Binding Recetas}" x:Name="ListaRecetas" Grid.Row="1" Scrolled="OnScrolled">
             <CollectionView.ItemTemplate>
                 <DataTemplate>
-                    <Border
-                        StrokeThickness="0"
-                        BackgroundColor="#9C40F7"
-                        StrokeShape="RoundRectangle 15"
-                        Padding="10"
-                        Margin="0,10"
-                        HeightRequest="120">
-                        <Grid ColumnDefinitions="120, *">
+                    <Border StrokeThickness="0" BackgroundColor="#9C40F7" StrokeShape="RoundRectangle 15" Padding="10" Margin="20,20" HeightRequest="240">
+                        <Grid ColumnDefinitions="Auto, *">
                             <Image Grid.Column="0"
-                                   Source="{Binding Imagen}"
+                                   Source="{Binding ImagenSource}"
                                    Aspect="AspectFill"
-                                   HeightRequest="100"
-                                   WidthRequest="100" />
+                                   HeightRequest="200"
+                                   WidthRequest="200" />
                             
                             <VerticalStackLayout Grid.Column="1" Padding="10,0" Spacing="4">
-                                <Label Text="{Binding Nombre}"
-                                       FontAttributes="Bold"
-                                       FontSize="18" />
-
-                                <Label Text="{Binding Comensales, StringFormat='Comensales: {0}'}" />
-                                <Label Text="{Binding Tiempo, StringFormat='Tiempo: {0} min'}" />
-                                <Label Text="{Binding Cocina, StringFormat='Cocina: {0}'}" />
-                                <Label Text="{Binding Origen, StringFormat='Origen: {0}'}" />
-                                <Label Text="{Binding IngredientesPrincipales}" LineBreakMode="TailTruncation" />
+                                <Label Text="{Binding Titulo}" FontAttributes="Bold" TextColor="White" FontSize="18" />
+                                <Label Text="{Binding Comensales, StringFormat='Comensales: {0}'}" TextColor="White"/>
+                                <Label Text="{Binding TiempoPreparacion, StringFormat='Tiempo: {0} min'}" TextColor="White" />
+                                <Label Text="{Binding TipoCocina, StringFormat='Cocina: {0}'}" TextColor="White" />
+                                <Label Text="{Binding OrigenDelPlato, StringFormat='Origen: {0}'}" TextColor="White" />
+                                <Label Text="{Binding IngredientePrincipal, StringFormat='Ingrediente principal: {0}'}" LineBreakMode="WordWrap" TextColor="White" />
 
                                 <HorizontalStackLayout Spacing="15" Margin="0,5,0,0">
                                     <!-- BOTÓN DE LIKE -->
