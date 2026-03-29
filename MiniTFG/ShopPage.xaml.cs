@@ -1,16 +1,60 @@
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+
 namespace MiniTFG;
 
-public partial class ShopPage : ContentPage
+public partial class ShopPage : ContentPage, INotifyPropertyChanged
 {
-	public ShopPage()
+    public event PropertyChangedEventHandler PropertyChanged;
+    protected void OnPropertyChanged(string name)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+    }
+
+    private int _likesTotales;
+
+    public int LikesTotales
+    {
+        get => _likesTotales;
+        set
+        {
+            if (_likesTotales != value)
+            {
+                _likesTotales = value;
+                OnPropertyChanged();
+            }
+        }
+    }
+
+    public ShopPage()
 	{
 		InitializeComponent();
+        BindingContext = this;
+        CargarLikesTotales();
 
         foreach (var banner in SkinsManager.BannersDisponibles)
             BannersContainer.Children.Add(CrearItemSkin(banner, true));
 
         foreach (var foto in SkinsManager.FotosDisponibles)
             FotosContainer.Children.Add(CrearItemSkin(foto, false));
+    }
+
+    private async void CargarLikesTotales()
+    {
+        int usuarioId = App.UsuarioActual?.Id ?? 0;
+
+        if (usuarioId == 0)
+        {
+            LikesTotales = 0;
+            LikesLabel.Text = "0"; // o lo que uses en XAML
+            return;
+        }
+
+        var api = new ApiService();
+        var likesUsuario = await api.GetLikesUsuarioAsync(usuarioId);
+
+        LikesTotales = likesUsuario.Count();
+        LikesLabel.Text = $"Likes: {LikesTotales}";
     }
 
     private View CrearItemSkin(Skin skin, bool esBanner)

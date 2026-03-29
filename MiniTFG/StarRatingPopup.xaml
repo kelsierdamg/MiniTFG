@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<toolkit:Popup
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    x:Class="MiniTFG.StarRatingPopup">
+
+    <VerticalStackLayout Padding="20" Spacing="20" BackgroundColor="#9C40F7"
+                         HorizontalOptions="Center" VerticalOptions="Center">
+
+        <Label Text="Valora al usuario" FontSize="20" HorizontalOptions="Center" TextColor="White"/>
+
+        <HorizontalStackLayout Spacing="10" HorizontalOptions="Center">
+            <Image x:Name="Star1" Source="star.png" WidthRequest="40" HeightRequest="40"/>
+            <Image x:Name="Star2" Source="star.png" WidthRequest="40" HeightRequest="40"/>
+            <Image x:Name="Star3" Source="star.png" WidthRequest="40" HeightRequest="40"/>
+            <Image x:Name="Star4" Source="star.png" WidthRequest="40" HeightRequest="40"/>
+            <Image x:Name="Star5" Source="star.png" WidthRequest="40" HeightRequest="40"/>
+        </HorizontalStackLayout>
+
+    </VerticalStackLayout>
+</toolkit:Popup>

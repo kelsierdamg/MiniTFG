@@ -1,11 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Text;
+using System.Text.Json.Serialization;
 
 namespace MiniTFG
 {
-    public class Usuario
+    public class Usuario : INotifyPropertyChanged
     {
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected void OnPropertyChanged(string name)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        }
         public int Id { get; set; }
         public string Nombre { get; set; }
         public string Foto { get; set; }

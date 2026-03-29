@@ -3,12 +3,18 @@ using System;
 using System.Collections.Generic;
 using System.Net.Http.Json;
 using System.Text;
+using System.Text.Json;
 
 namespace MiniTFG
 {
     public class ApiService
     {
         private readonly HttpClient _httpClient;
+        private readonly JsonSerializerOptions _options = new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        };
+
 
         public ApiService()
         {
@@ -31,9 +37,9 @@ namespace MiniTFG
 
         // ------------------ USUARIOS ------------------
 
-        public async Task<List<Usuario>> GetUsuariosAsync()
+        public async Task<Usuario[]> GetUsuariosAsync()
         {
-            return await _httpClient.GetFromJsonAsync<List<Usuario>>("api/usuarios");
+            return await _httpClient.GetFromJsonAsync<Usuario[]>("api/usuarios");
         }
 
         public async Task<Usuario> GetUsuarioByIdAsync(int id)
@@ -65,9 +71,9 @@ namespace MiniTFG
 
         // ------------------ RECETAS ------------------
 
-        public async Task<List<Receta>> GetRecetasAsync()
+        public async Task<Receta[]> GetRecetasAsync()
         {
-            return await _httpClient.GetFromJsonAsync<List<Receta>>("api/recetas");
+            return await _httpClient.GetFromJsonAsync<Receta[]>("api/recetas");
         }
 
         public async Task<Receta> GetRecetaByIdAsync(int id)
@@ -96,11 +102,63 @@ namespace MiniTFG
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadFromJsonAsync<Like>();
         }
-
-        public async Task<bool> DeleteLikeAsync(int id)
+        
+        public async Task<IEnumerable<Like>> GetLikesUsuarioAsync(int usuarioId)
         {
-            var response = await _httpClient.DeleteAsync($"api/likes/{id}");
+            var response = await _httpClient.GetAsync($"api/Likes/usuario/{usuarioId}");
+
+            if (!response.IsSuccessStatusCode)
+                return Enumerable.Empty<Like>();
+
+            var json = await response.Content.ReadAsStringAsync();
+            return JsonSerializer.Deserialize<IEnumerable<Like>>(json, _options)
+                   ?? Enumerable.Empty<Like>();
+        }
+
+
+        public async Task<bool> DeleteLikeAsync(int usuarioId, int recetaId)
+        {
+            var response = await _httpClient.DeleteAsync($"api/Likes?usuarioId={usuarioId}&recetaId={recetaId}");
             return response.IsSuccessStatusCode;
         }
+
+        // ------------------ VALORACIONES ------------------
+
+        public async Task<bool> PostValoracionAsync(Valoracion valoracion)
+        {
+            var json = JsonSerializer.Serialize(valoracion);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            var response = await _httpClient.PostAsync("api/Valoraciones", content);
+
+            return response.IsSuccessStatusCode;
+        }
+
+        public async Task<List<Valoracion>> GetValoracionesAsync(int usuarioValoradoId)
+        {
+            var response = await _httpClient.GetAsync($"api/Valoraciones/{usuarioValoradoId}");
+
+            if (!response.IsSuccessStatusCode)
+                return new List<Valoracion>();
+
+            var json = await response.Content.ReadAsStringAsync();
+            return JsonSerializer.Deserialize<List<Valoracion>>(json);
+        }
+
+        public async Task<List<Valoracion>> GetValoracionesPorUsuarioAsync(int usuarioQueValoraId)
+        {
+            try
+            {
+                var response = await _httpClient.GetAsync($"api/Valoraciones/usuario/{usuarioQueValoraId}");
+                response.EnsureSuccessStatusCode();
+                var json = await response.Content.ReadAsStringAsync();
+                return JsonSerializer.Deserialize<List<Valoracion>>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
     }
 }

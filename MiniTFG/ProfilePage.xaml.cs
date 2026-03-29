@@ -1,5 +1,4 @@
 using Microsoft.Maui.Controls.Shapes;
-using Org.Apache.Http.Authentication;
 using System.Collections.ObjectModel;
 
 namespace MiniTFG;
@@ -15,9 +14,16 @@ public partial class ProfilePage : ContentPage
         UsernameLabel.BindingContext = App.UsuarioActual;
         ListaMisRecetas.BindingContext = this;
         CargarRecetas();
+    }
 
-        // double media = PerfilManager.ObtenerMedia(usuarioId);
-        //MostrarEstrellas(media);
+    protected override async void OnAppearing()
+    {
+        base.OnAppearing();
+
+        var api = new ApiService();
+        App.UsuarioActual = await api.GetUsuarioByIdAsync(App.UsuarioActual.Id);
+
+        MostrarEstrellas(App.UsuarioActual.ValoracionMedia);
 
     }
 
@@ -74,27 +80,29 @@ public partial class ProfilePage : ContentPage
 
     private Grid CrearEstrella(double porcentaje)
     {
+        const double STAR_SIZE = 30; // Debe coincidir con WidthRequest/HeightRequest
+        
         var grid = new Grid
         {
-            WidthRequest = 30,
-            HeightRequest = 30
+            WidthRequest = STAR_SIZE,
+            HeightRequest = STAR_SIZE
         };
 
         var empty = new Image
         {
-            Source = "star_empty.png",
+            Source = "starempty.png",
             Aspect = Aspect.Fill
         };
 
         var full = new Image
         {
-            Source = "star_full.png",
+            Source = "starfull.png",
             Aspect = Aspect.Fill
         };
 
         full.Clip = new RectangleGeometry
         {
-            Rect = new Rect(0, 0, porcentaje, 1)
+            Rect = new Rect(0, 0, STAR_SIZE * porcentaje, STAR_SIZE)  // ✅ CORRECTO
         };
 
         grid.Children.Add(empty);
@@ -121,5 +129,4 @@ public partial class ProfilePage : ContentPage
             EstrellasContainer.Children.Add(CrearEstrella(porcentaje));
         }
     }
-
 }

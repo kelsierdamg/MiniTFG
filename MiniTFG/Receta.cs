@@ -1,12 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Text;
 using System.Text.Json.Serialization;
 
 namespace MiniTFG
 {
-    public class Receta
+    public class Receta : INotifyPropertyChanged
     {
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected void OnPropertyChanged(string name)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        }
         public int Id { get; set; }
         public int UsuarioId { get; set; }
         public string Titulo { get; set; }
@@ -15,6 +22,50 @@ namespace MiniTFG
 
         [JsonIgnore] // para que no se envíe a la API
         public ImageSource ImagenSource { get; set; }
+
+        [JsonIgnore]
+        public string IconoLike => UsuarioHaDadoLike ? "heartfull.png" : "heart.png";
+
+        private int _likes;
+        [JsonIgnore]
+        public int Likes
+        {
+            get => _likes;
+            set
+            {
+                _likes = value;
+                OnPropertyChanged(nameof(Likes));
+            }
+        }
+
+        private bool _usuarioHaDadoLike;
+        [JsonIgnore]
+        public bool UsuarioHaDadoLike
+        {
+            get => _usuarioHaDadoLike;
+            set
+            {
+                _usuarioHaDadoLike = value;
+                OnPropertyChanged(nameof(UsuarioHaDadoLike));
+                OnPropertyChanged(nameof(IconoLike));
+            }
+        }
+
+        private bool _usuarioHaValorado;
+        [JsonIgnore]
+        public bool UsuarioHaValorado
+        {
+            get => _usuarioHaValorado;
+            set
+            {
+                _usuarioHaValorado = value;
+                OnPropertyChanged(nameof(UsuarioHaValorado));
+                OnPropertyChanged(nameof(IconoEstrella));
+            }
+        }
+
+        public string IconoEstrella => UsuarioHaValorado ? "starfull.png" : "star.png";
+
 
         public int Comensales { get; set; }
         public string OrigenDelPlato { get; set; }

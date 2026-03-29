@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="MiniTFG.HomePage"
-             NavigationPage.HasNavigationBar="False">
+             x:Class="MiniTFG.HomePage">
     <Grid RowDefinitions="Auto,*,Auto">
 
         <Grid x:Name="TopBar"
@@ -40,20 +39,36 @@
                                 <Label Text="{Binding OrigenDelPlato, StringFormat='Origen: {0}'}" TextColor="White" />
                                 <Label Text="{Binding IngredientePrincipal, StringFormat='Ingrediente principal: {0}'}" LineBreakMode="WordWrap" TextColor="White" />
 
-                                <HorizontalStackLayout Spacing="15" Margin="0,5,0,0">
+                                <HorizontalStackLayout Spacing="15" Margin="0,5,0,0" VerticalOptions="End" HorizontalOptions="End">
                                     <!-- BOTÓN DE LIKE -->
-                                    <ImageButton Source="heart.png"
-                                                 HeightRequest="28"
-                                                 WidthRequest="28"
-                                                 BackgroundColor="Transparent"
-                                                 Clicked="LikeClicked" />
+                                    <VerticalStackLayout>
+                                        <Image Source="{Binding IconoLike}"
+                                               HeightRequest="20"
+                                               WidthRequest="20"
+                                               Aspect="AspectFit">
+                                            <Image.GestureRecognizers>
+                                                <TapGestureRecognizer Tapped="LikeClicked" />
+                                            </Image.GestureRecognizers>
+                                        </Image>
+
+                                        <Label Text="{Binding Likes}"
+                                               FontSize="12"
+                                               TextColor="White"
+                                               HorizontalOptions="Center"/>
+                                    </VerticalStackLayout>
+
 
                                     <!-- BOTÓN DE PUNTUAR -->
-                                    <ImageButton Source="star.png"
-                                                 HeightRequest="28"
-                                                 WidthRequest="28"
-                                                 BackgroundColor="Transparent"
-                                                 Clicked="PuntuarClicked" />
+                                    <VerticalStackLayout Spacing="2" HorizontalOptions="Center">
+                                        <Image Source="{Binding IconoEstrella}"
+                                               HeightRequest="20"
+                                               WidthRequest="20"
+                                               Aspect="AspectFit">
+                                            <Image.GestureRecognizers>
+                                                <TapGestureRecognizer Tapped="PuntuarClicked" />
+                                            </Image.GestureRecognizers>
+                                        </Image>
+                                    </VerticalStackLayout>
                                 </HorizontalStackLayout>
                             </VerticalStackLayout>
                         </Grid>

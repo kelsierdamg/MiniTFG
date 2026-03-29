@@ -64,7 +64,7 @@
             x:Name="btnSession"
             Clicked="SessionClicked"
             HeightRequest="50"
-            CornerRadius="0"
+            CornerRadius="10"
             BackgroundColor="#9C40F7"
             VerticalOptions="Center"
             HorizontalOptions="Fill"
@@ -75,7 +75,7 @@
             x:Name="btnGuest"
             Clicked="GuestClicked"
             HeightRequest="50"
-            CornerRadius="0"
+            CornerRadius="10"
             BackgroundColor="#9C40F7"
             VerticalOptions="Center"
             HorizontalOptions="Fill" />
@@ -85,7 +85,7 @@
             x:Name="btnCreate"
             Clicked="CreateClicked"
             HeightRequest="50"
-            CornerRadius="0"
+            CornerRadius="10"
             BackgroundColor="#9C40F7"
             VerticalOptions="Center"
             HorizontalOptions="Fill" />

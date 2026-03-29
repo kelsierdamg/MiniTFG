@@ -15,6 +15,10 @@
 
             <!-- BANNERS -->
             <VerticalStackLayout Spacing="10">
+                <Label x:Name="LikesLabel"
+                       FontSize="16"
+                       TextColor="#666" />
+
                 <Label Text="Banners"
                        FontSize="22"
                        FontAttributes="Bold"
