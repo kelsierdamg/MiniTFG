@@ -160,5 +160,29 @@ namespace MiniTFG
             }
         }
 
+        // Obtener skins compradas por usuario (devuelve List<string> con SkinId)
+        public async Task<List<string>> GetUserSkinsAsync(int usuarioId)
+        {
+            var res = await _httpClient.GetAsync($"api/Skins/user/{usuarioId}");
+            if (!res.IsSuccessStatusCode) return new List<string>();
+            var json = await res.Content.ReadAsStringAsync();
+            return JsonSerializer.Deserialize<List<string>>(json, _options);
+        }
+
+        // Comprar skin (sin DTOs: ruta)
+        public async Task<bool> PurchaseSkinAsync(int usuarioId, string skinId)
+        {
+            var res = await _httpClient.PostAsync($"api/Skins/purchase/{usuarioId}/{Uri.EscapeDataString(skinId)}", null);
+            return res.IsSuccessStatusCode;
+        }
+
+        // Activar skin (sin DTOs: ruta)
+        // tipo: "foto" o "banner"
+        public async Task<bool> ActivateSkinAsync(int usuarioId, string skinId, string tipo)
+        {
+            var res = await _httpClient.PostAsync($"api/Skins/activate/{usuarioId}/{Uri.EscapeDataString(skinId)}/{tipo}", null);
+            return res.IsSuccessStatusCode;
+        }
+
     }
 }

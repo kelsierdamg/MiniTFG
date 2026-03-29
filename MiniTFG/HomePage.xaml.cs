@@ -11,6 +11,8 @@ namespace MiniTFG;
 public partial class HomePage : ContentPage
 {
     public ObservableCollection<Receta> Recetas { get; set; } = new();
+    private List<Receta> TodasLasRecetas;
+    private List<Receta> RecetasFiltradasBase;
     public int Likes { get; set; }
     public bool UsuarioHaDadoLike { get; set; }
 
@@ -46,6 +48,47 @@ public partial class HomePage : ContentPage
         lastScrollY = currentScrollY;
     }
 
+    private List<Receta> FiltrarPorPreferencias(List<Receta> recetas, Usuario usuario)
+    {
+        var filtradas = recetas.AsEnumerable();
+
+        if (usuario.Gluten) filtradas = filtradas.Where(r => !r.Gluten);
+        if (usuario.Lactosa) filtradas = filtradas.Where(r => !r.Lactosa);
+        if (usuario.Huevo) filtradas = filtradas.Where(r => !r.Huevo);
+        if (usuario.FrutosSecos) filtradas = filtradas.Where(r => !r.FrutosSecos);
+        if (usuario.Marisco) filtradas = filtradas.Where(r => !r.Mariscos);
+        if (usuario.Soja) filtradas = filtradas.Where(r => !r.Soja);
+        if (usuario.Pescado) filtradas = filtradas.Where(r => !r.Pescado);
+        if (usuario.Cacahuetes) filtradas = filtradas.Where(r => !r.Cacahuetes);
+        if (usuario.Sesamo) filtradas = filtradas.Where(r => !r.Sesamo);
+        if (usuario.Sulfitos) filtradas = filtradas.Where(r => !r.Sulfitos);
+        if (usuario.Mostaza) filtradas = filtradas.Where(r => !r.Mostaza);
+        if (usuario.Altramuces) filtradas = filtradas.Where(r => !r.Altramuces);
+        if (usuario.Moluscos) filtradas = filtradas.Where(r => !r.Moluscos);
+        if (usuario.Apio) filtradas = filtradas.Where(r => !r.Apio);
+
+        // Preferencias dietéticas
+        if (usuario.Vegano) filtradas = filtradas.Where(r => r.Vegano);
+        else if (usuario.Vegetariano) filtradas = filtradas.Where(r => r.Vegetariano);
+
+        return filtradas.ToList();
+    }
+
+    private void OnSearchTextChanged(object sender, TextChangedEventArgs e)
+    {
+        var texto = e.NewTextValue?.Trim() ?? string.Empty;
+
+        var baseList = RecetasFiltradasBase ?? new List<Receta>();
+        var resultado = string.IsNullOrWhiteSpace(texto)
+            ? baseList
+            : baseList.Where(r => r.Titulo != null && r.Titulo.Contains(texto, StringComparison.OrdinalIgnoreCase)).ToList();
+
+        // actualizar ObservableCollection de forma eficiente
+        Recetas.Clear();
+        foreach (var r in resultado)
+            Recetas.Add(r);
+    }
+
     private async void CargarRecetas()
     {
         var api = new ApiService();
@@ -54,6 +97,8 @@ public partial class HomePage : ContentPage
 
         if (lista == null)
             return;
+
+        TodasLasRecetas = lista.ToList();
 
         _likesUsuario.Clear();
         _usuariosValorados.Clear();
@@ -75,6 +120,15 @@ public partial class HomePage : ContentPage
                 _likesUsuario = new HashSet<int>();
                 _usuariosValorados = new HashSet<int>();
             }
+        }
+
+        if (App.UsuarioActual == null || (App.UsuarioActual != null))
+        {
+            RecetasFiltradasBase = TodasLasRecetas.ToList(); // invitado ve todo
+        }
+        else
+        {
+            RecetasFiltradasBase = FiltrarPorPreferencias(TodasLasRecetas, App.UsuarioActual);
         }
 
         Recetas.Clear();

@@ -37,6 +37,32 @@ public partial class ShopPage : ContentPage, INotifyPropertyChanged
 
         foreach (var foto in SkinsManager.FotosDisponibles)
             FotosContainer.Children.Add(CrearItemSkin(foto, false));
+
+        _ = LoadStoreAsync();
+    }
+
+    private async Task LoadStoreAsync()
+    {
+        if (App.UsuarioActual == null) return;
+
+        var api = new ApiService();
+        var owned = await api.GetUserSkinsAsync(App.UsuarioActual.Id); // List<string> de SkinId
+        var ownedSet = new HashSet<string>(owned);
+
+        // marcar en SkinsManager
+        foreach (var s in SkinsManager.BannersDisponibles)
+            s.Comprado = ownedSet.Contains(s.Id);
+
+        foreach (var s in SkinsManager.FotosDisponibles)
+            s.Comprado = ownedSet.Contains(s.Id);
+
+        // actualizar los controles visuales: recorre los children y actualiza bindings si hace falta
+        // si usas Skin observable y bindings, no hace falta; si no, refresca manualmente:
+        foreach (var child in BannersContainer.Children)
+            (child as VisualElement)?.InvalidateMeasure();
+
+        foreach (var child in FotosContainer.Children)
+            (child as VisualElement)?.InvalidateMeasure();
     }
 
     private async void CargarLikesTotales()
@@ -83,20 +109,97 @@ public partial class ShopPage : ContentPage, INotifyPropertyChanged
             HeightRequest = 40,
             WidthRequest = 120
         };
-        /*
-        boton.Clicked += (s, e) =>
+
+        // Si Skin implementa INotifyPropertyChanged, actualizamos el botón cuando cambie Comprado
+        if (skin is INotifyPropertyChanged npc)
         {
+            npc.PropertyChanged += (s, e) =>
+            {
+                if (e.PropertyName == nameof(Skin.Comprado))
+                {
+                    MainThread.BeginInvokeOnMainThread(() =>
+                    {
+                        boton.Text = skin.Comprado ? "Usar" : "Comprar";
+                        boton.BackgroundColor = skin.Comprado ? Color.FromArgb("#4CAF50") : Color.FromArgb("#9C40F7");
+                    });
+                }
+            };
+        }
+
+        boton.Clicked += async (s, e) =>
+        {
+            if (App.UsuarioActual == null)
+            {
+                await DisplayAlert("Inicia sesión", "Debes iniciar sesión para comprar o usar skins.", "OK");
+                return;
+            }
+
             if (!skin.Comprado)
-                ComprarSkin(skin);
+                await ComprarSkinAsync(skin);
             else
-                UsarSkin(skin, esBanner);
+                await UsarSkinAsync(skin, esBanner);
         };
-        */
+
         return new VerticalStackLayout
         {
             Spacing = 5,
             Children = { imagen, precio, boton }
         };
+    }
+
+    private async Task ComprarSkinAsync(Skin skin)
+    {
+        // ✅ VALIDAR LIKES
+        if (LikesTotales < skin.Precio)
+        {
+            await DisplayAlert("Likes insuficientes", 
+                $"Necesitas {skin.Precio} likes, tienes {LikesTotales}", "OK");
+            return;
+        }
+
+        var api = new ApiService();
+        bool ok = await api.PurchaseSkinAsync(App.UsuarioActual.Id, skin.Id);
+
+        if (ok)
+        {
+            skin.Comprado = true;
+            
+            // ✅ DECREMENTAR LIKES LOCALMENTE
+            LikesTotales -= skin.Precio;
+            LikesLabel.Text = $"Likes: {LikesTotales}";
+            
+            await DisplayAlert("Comprado", $"Has comprado {skin.Id}. Te quedan {LikesTotales} likes.", "OK");
+            
+            // ✅ OPCIONAL: Refrescar desde servidor para sincronizar
+        }
+        else
+        {
+            await DisplayAlert("Error", "No se pudo completar la compra. Intenta de nuevo.", "OK");
+            
+            // ✅ Refrescar desde servidor si falla
+        }
+    }
+
+    private async Task UsarSkinAsync(Skin skin, bool esBanner)
+    {
+        var api = new ApiService();
+        bool ok = await api.ActivateSkinAsync(App.UsuarioActual.Id, skin.Id, esBanner ? "banner" : "foto");
+
+        if (!ok)
+        {
+            await DisplayAlert("Error", "No se pudo activar la skin.", "OK");
+            return;
+        }
+
+        // Actualiza App.UsuarioActual para que la UI del perfil muestre la skin
+        // Decide si guardas SkinId o Image en Usuario.Foto/Banner. Aquí usamos Image (nombre de archivo).
+        if (esBanner)
+            App.UsuarioActual.Banner = skin.Image;
+        else
+            App.UsuarioActual.Foto = skin.Image;
+
+        // Si Usuario implementa INotifyPropertyChanged, la UI se actualizará.
+        await DisplayAlert("Activada", "Skin activada correctamente.", "OK");
     }
 
 }

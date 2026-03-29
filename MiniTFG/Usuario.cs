@@ -6,14 +6,8 @@ using System.Text.Json.Serialization;
 
 namespace MiniTFG
 {
-    public class Usuario : INotifyPropertyChanged
+    public class Usuario
     {
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        protected void OnPropertyChanged(string name)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-        }
         public int Id { get; set; }
         public string Nombre { get; set; }
         public string Foto { get; set; }
