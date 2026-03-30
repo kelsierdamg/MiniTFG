@@ -20,17 +20,29 @@
             </Border>
         </Grid>
 
-
-        <CollectionView ItemsSource="{Binding Recetas}" x:Name="ListaRecetas" Grid.Row="1" Scrolled="OnScrolled">
+        <CollectionView ItemsSource="{Binding Recetas}" x:Name="ListaRecetas" Grid.Row="1">
             <CollectionView.ItemTemplate>
                 <DataTemplate>
                     <Border StrokeThickness="0" BackgroundColor="#9C40F7" StrokeShape="RoundRectangle 15" Padding="10" Margin="20,20" HeightRequest="240">
                         <Grid ColumnDefinitions="Auto, *">
-                            <Image Grid.Column="0"
-                                   Source="{Binding ImagenSource}"
+                            <StackLayout Orientation="Horizontal" Spacing="10" Grid.Row="0">
+                                <Image Source="{Binding CreadorFoto}"
+                                       HeightRequest="20"
+                                       WidthRequest="20"
+                                       Aspect="AspectFill"
+                                       Clip="EllipseGeometry Center=20,20 RadiusX=20 RadiusY=20"/>
+                                <Button Text="{Binding CreadorNombre}"
+                                        CommandParameter="{Binding UsuarioId}"
+                                        BackgroundColor="Transparent"
+                                        TextColor="White"
+                                        FontAttributes="Bold"
+                                        Clicked="OnCreatorClicked"/>
+                            </StackLayout>
+                            
+                            <Image Source="{Binding ImagenSource}"
                                    Aspect="AspectFill"
-                                   HeightRequest="200"
-                                   WidthRequest="200" />
+                                   HeightRequest="100"
+                                   WidthRequest="100" />
                             
                             <VerticalStackLayout Grid.Column="1" Padding="10,0" Spacing="4">
                                 <Label Text="{Binding Titulo}" FontAttributes="Bold" TextColor="White" FontSize="18" />

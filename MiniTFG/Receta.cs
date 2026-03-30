@@ -63,9 +63,54 @@ namespace MiniTFG
                 OnPropertyChanged(nameof(IconoEstrella));
             }
         }
-
+        [JsonIgnore]
         public string IconoEstrella => UsuarioHaValorado ? "starfull.png" : "star.png";
 
+        private string _creadorNombre;
+        [JsonIgnore]
+        public string CreadorNombre
+        {
+            get => _creadorNombre;
+            set
+            {
+                if (_creadorNombre != value)
+                {
+                    _creadorNombre = value;
+                    OnPropertyChanged(nameof(CreadorNombre));
+                }
+            }
+        }
+
+        private string _creadorFoto;
+        [JsonIgnore]
+        public string CreadorFoto
+        {
+            get => _creadorFoto;
+            set
+            {
+                if (_creadorFoto != value)
+                {
+                    _creadorFoto = value;
+                    OnPropertyChanged(nameof(CreadorFoto));
+                }
+            }
+        }
+
+        [JsonIgnore]
+        public ImageSource CreadorFotoSource
+        {
+            get
+            {
+                if (string.IsNullOrWhiteSpace(CreadorFoto))
+                    return "userdefault.png"; // una imagen local por defecto
+
+                // Si NO es una URL válida, devolvemos imagen por defecto
+                if (!Uri.TryCreate(CreadorFoto, UriKind.Absolute, out var uri))
+                    return "userdefault.png";
+
+                return ImageSource.FromUri(uri);
+            }
+        }
 
         public int Comensales { get; set; }
         public string OrigenDelPlato { get; set; }

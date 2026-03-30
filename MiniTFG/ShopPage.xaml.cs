@@ -31,38 +31,42 @@ public partial class ShopPage : ContentPage, INotifyPropertyChanged
 		InitializeComponent();
         BindingContext = this;
         CargarLikesTotales();
-
-        foreach (var banner in SkinsManager.BannersDisponibles)
-            BannersContainer.Children.Add(CrearItemSkin(banner, true));
-
-        foreach (var foto in SkinsManager.FotosDisponibles)
-            FotosContainer.Children.Add(CrearItemSkin(foto, false));
-
-        _ = LoadStoreAsync();
     }
+
+    protected override async void OnAppearing()
+    {
+        base.OnAppearing();
+        await LoadStoreAsync();
+    }
+
 
     private async Task LoadStoreAsync()
     {
         if (App.UsuarioActual == null) return;
 
         var api = new ApiService();
-        var owned = await api.GetUserSkinsAsync(App.UsuarioActual.Id); // List<string> de SkinId
-        var ownedSet = new HashSet<string>(owned);
+        var skins = await api.GetSkinsAsync(); // List<Skin>
 
-        // marcar en SkinsManager
-        foreach (var s in SkinsManager.BannersDisponibles)
+        // 2. Separar banners y fotos (según tu criterio)
+        var banners = skins.Where(s => s.Nombre.Contains("banner", StringComparison.OrdinalIgnoreCase)).ToList();
+        var fotos = skins.Where(s => s.Nombre.Contains("foto", StringComparison.OrdinalIgnoreCase)).ToList();
+
+        // 3. Obtener skins compradas
+        var owned = await api.GetPurchasedUserSkinsAsync(App.UsuarioActual.Id); // List<int>
+        var ownedSet = new HashSet<int>(owned);
+
+        // 4. Marcar skins compradas
+        foreach (var s in skins)
             s.Comprado = ownedSet.Contains(s.Id);
 
-        foreach (var s in SkinsManager.FotosDisponibles)
-            s.Comprado = ownedSet.Contains(s.Id);
+        // 5. Pintar en pantalla
+        BannersContainer.Children.Clear();
+        foreach (var b in banners)
+            BannersContainer.Children.Add(CrearItemSkin(b, true));
 
-        // actualizar los controles visuales: recorre los children y actualiza bindings si hace falta
-        // si usas Skin observable y bindings, no hace falta; si no, refresca manualmente:
-        foreach (var child in BannersContainer.Children)
-            (child as VisualElement)?.InvalidateMeasure();
-
-        foreach (var child in FotosContainer.Children)
-            (child as VisualElement)?.InvalidateMeasure();
+        FotosContainer.Children.Clear();
+        foreach (var f in fotos)
+            FotosContainer.Children.Add(CrearItemSkin(f, false));
     }
 
     private async void CargarLikesTotales()
@@ -87,7 +91,7 @@ public partial class ShopPage : ContentPage, INotifyPropertyChanged
     {
         var imagen = new Image
         {
-            Source = skin.Image,
+            Source = skin.Imagen,
             HeightRequest = esBanner ? 120 : 80,
             WidthRequest = esBanner ? 220 : 80,
             Aspect = Aspect.AspectFill
@@ -130,7 +134,7 @@ public partial class ShopPage : ContentPage, INotifyPropertyChanged
         {
             if (App.UsuarioActual == null)
             {
-                await DisplayAlert("Inicia sesión", "Debes iniciar sesión para comprar o usar skins.", "OK");
+                await DisplayAlertAsync("Inicia sesión", "Debes iniciar sesión para comprar o usar skins.", "OK");
                 return;
             }
 
@@ -152,7 +156,7 @@ public partial class ShopPage : ContentPage, INotifyPropertyChanged
         // ✅ VALIDAR LIKES
         if (LikesTotales < skin.Precio)
         {
-            await DisplayAlert("Likes insuficientes", 
+            await DisplayAlertAsync("Likes insuficientes", 
                 $"Necesitas {skin.Precio} likes, tienes {LikesTotales}", "OK");
             return;
         }
@@ -168,13 +172,13 @@ public partial class ShopPage : ContentPage, INotifyPropertyChanged
             LikesTotales -= skin.Precio;
             LikesLabel.Text = $"Likes: {LikesTotales}";
             
-            await DisplayAlert("Comprado", $"Has comprado {skin.Id}. Te quedan {LikesTotales} likes.", "OK");
+            await DisplayAlertAsync("Comprado", $"Has comprado {skin.Id}. Te quedan {LikesTotales} likes.", "OK");
             
             // ✅ OPCIONAL: Refrescar desde servidor para sincronizar
         }
         else
         {
-            await DisplayAlert("Error", "No se pudo completar la compra. Intenta de nuevo.", "OK");
+            await DisplayAlertAsync("Error", "No se pudo completar la compra. Intenta de nuevo.", "OK");
             
             // ✅ Refrescar desde servidor si falla
         }
@@ -187,19 +191,19 @@ public partial class ShopPage : ContentPage, INotifyPropertyChanged
 
         if (!ok)
         {
-            await DisplayAlert("Error", "No se pudo activar la skin.", "OK");
+            await DisplayAlertAsync("Error", "No se pudo activar la skin.", "OK");
             return;
         }
 
         // Actualiza App.UsuarioActual para que la UI del perfil muestre la skin
         // Decide si guardas SkinId o Image en Usuario.Foto/Banner. Aquí usamos Image (nombre de archivo).
         if (esBanner)
-            App.UsuarioActual.Banner = skin.Image;
+            App.UsuarioActual.Banner = skin.Imagen;
         else
-            App.UsuarioActual.Foto = skin.Image;
+            App.UsuarioActual.Foto = skin.Imagen;
 
         // Si Usuario implementa INotifyPropertyChanged, la UI se actualizará.
-        await DisplayAlert("Activada", "Skin activada correctamente.", "OK");
+        await DisplayAlertAsync("Activada", "Skin activada correctamente.", "OK");
     }
 
 }

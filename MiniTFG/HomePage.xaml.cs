@@ -30,23 +30,17 @@ public partial class HomePage : ContentPage
         CargarRecetas();
     }
 
-    private async void OnScrolled(object sender, ItemsViewScrolledEventArgs e)
+    private async void OnCreatorClicked(object sender, EventArgs e)
     {
-        double currentScrollY = e.VerticalOffset;
-        if (currentScrollY > lastScrollY + 5 && !isBarHidden)
-        {
-            isBarHidden = true;
-            await BottomBar.TranslateToAsync(0, 80, 250, Easing.CubicIn);
-            await TopBar.TranslateToAsync(0, -80, 250, Easing.CubicIn);
-        }
-        else if (currentScrollY < lastScrollY - 5 && isBarHidden)
-        {
-            isBarHidden = false;
-            await BottomBar.TranslateToAsync(0, 0, 250, Easing.CubicOut);
-            await TopBar.TranslateToAsync(0, 0, 250, Easing.CubicOut);
-        }
-        lastScrollY = currentScrollY;
+        var button = sender as Button;
+        int creadorId = (int)button.CommandParameter;
+
+        var api = new ApiService();
+        var usuario = await api.GetUsuarioByIdAsync(creadorId);
+
+        await Shell.Current.GoToAsync("other");
     }
+
 
     private List<Receta> FiltrarPorPreferencias(List<Receta> recetas, Usuario usuario)
     {
@@ -93,13 +87,22 @@ public partial class HomePage : ContentPage
     {
         var api = new ApiService();
         int usuarioId = App.UsuarioActual?.Id ?? 0;
-        var lista = await api.GetRecetasAsync();
 
-        if (lista == null)
-            return;
+        // 1. Descargar recetas
+        var lista = await api.GetRecetasAsync();
+        if (lista == null) return;
+
+        // 2. Cargar datos del creador
+        foreach (var r in lista)
+        {
+            var creador = await api.GetUsuarioByIdAsync(r.UsuarioId);
+            r.CreadorNombre = creador.Nombre;
+            r.CreadorFoto = creador.Foto;
+        }
 
         TodasLasRecetas = lista.ToList();
 
+        // 4. Cargar likes y valoraciones
         _likesUsuario.Clear();
         _usuariosValorados.Clear();
 
@@ -122,30 +125,30 @@ public partial class HomePage : ContentPage
             }
         }
 
-        if (App.UsuarioActual == null || (App.UsuarioActual != null))
-        {
-            RecetasFiltradasBase = TodasLasRecetas.ToList(); // invitado ve todo
-        }
-        else
-        {
+        // 5. ✅ APLICAR FILTRO POR PREFERENCIAS
+        if (App.UsuarioActual != null)
             RecetasFiltradasBase = FiltrarPorPreferencias(TodasLasRecetas, App.UsuarioActual);
-        }
+        else
+            RecetasFiltradasBase = TodasLasRecetas.ToList();
 
+        // 6-7. Actualizar UI
         Recetas.Clear();
-
-        foreach (var r in lista)
+        foreach (var r in RecetasFiltradasBase)
         {
+            // Likes
             if (_likesUsuario.Contains(r.Id))
             {
                 r.UsuarioHaDadoLike = true;
                 r.Likes++;
             }
 
+            // Valoraciones
             if (_usuariosValorados.Contains(r.UsuarioId))
             {
                 r.UsuarioHaValorado = true;
             }
 
+            // Imagen
             if (!string.IsNullOrEmpty(r.Imagen))
             {
                 byte[] bytes = Convert.FromBase64String(r.Imagen);

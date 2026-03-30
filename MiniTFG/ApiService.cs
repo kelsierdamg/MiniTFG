@@ -35,6 +35,13 @@ namespace MiniTFG
             #endif
         }
 
+        // Clase interna para deserialización flexible
+        private class UserSkinDto
+        {
+            public int Id { get; set; }
+            public int SkinId { get; set; }
+        }
+
         // ------------------ USUARIOS ------------------
 
         public async Task<Usuario[]> GetUsuariosAsync()
@@ -160,6 +167,8 @@ namespace MiniTFG
             }
         }
 
+        // ------------------ SKINS ------------------
+
         // Obtener skins compradas por usuario (devuelve List<string> con SkinId)
         public async Task<List<string>> GetUserSkinsAsync(int usuarioId)
         {
@@ -169,20 +178,98 @@ namespace MiniTFG
             return JsonSerializer.Deserialize<List<string>>(json, _options);
         }
 
-        // Comprar skin (sin DTOs: ruta)
-        public async Task<bool> PurchaseSkinAsync(int usuarioId, string skinId)
+        public async Task<List<Skin>> GetSkinsAsync()
         {
-            var res = await _httpClient.PostAsync($"api/Skins/purchase/{usuarioId}/{Uri.EscapeDataString(skinId)}", null);
-            return res.IsSuccessStatusCode;
+            var response = await _httpClient.GetAsync("api/skins");
+
+            if (!response.IsSuccessStatusCode)
+                return new List<Skin>();
+
+            var json = await response.Content.ReadAsStringAsync();
+            return JsonSerializer.Deserialize<List<Skin>>(json, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            });
         }
 
-        // Activar skin (sin DTOs: ruta)
-        // tipo: "foto" o "banner"
-        public async Task<bool> ActivateSkinAsync(int usuarioId, string skinId, string tipo)
+        // ==========================================
+        // 2. OBTENER SKINS COMPRADAS POR UN USUARIO
+        // ==========================================
+        public async Task<List<int>> GetPurchasedUserSkinsAsync(int usuarioId)
         {
-            var res = await _httpClient.PostAsync($"api/Skins/activate/{usuarioId}/{Uri.EscapeDataString(skinId)}/{tipo}", null);
-            return res.IsSuccessStatusCode;
+            var response = await _httpClient.GetAsync($"api/userskins/user/{usuarioId}");
+
+            if (!response.IsSuccessStatusCode)
+                return new List<int>();
+
+            var json = await response.Content.ReadAsStringAsync();
+
+            try
+            {
+                // 1. Intenta deserializar como array de números puros: [1, 2, 3]
+                var result = JsonSerializer.Deserialize<List<int>>(json, _options);
+                if (result != null)
+                    return result;
+            }
+            catch (JsonException)
+            {
+                // No es un array de números, continúa
+            }
+
+            try
+            {
+                // 2. Intenta como array de objetos con propiedades "id" o "skinid": [{"id":1}, {"skinid":2}]
+                var dtos = JsonSerializer.Deserialize<List<UserSkinDto>>(json, _options);
+                if (dtos != null)
+                {
+                    return dtos
+                        .Select(d => d.Id != 0 ? d.Id : d.SkinId)
+                        .Where(id => id > 0)
+                        .ToList();
+                }
+            }
+            catch (JsonException)
+            {
+                // No es un array de objetos, continúa
+            }
+
+            try
+            {
+                // 3. Intenta como array de strings: ["1", "2", "3"]
+                var stringIds = JsonSerializer.Deserialize<List<string>>(json, _options);
+                if (stringIds != null && stringIds.Count > 0)
+                {
+                    return stringIds
+                        .Where(s => int.TryParse(s, out _))
+                        .Select(s => int.Parse(s))
+                        .ToList();
+                }
+            }
+            catch (JsonException)
+            {
+                // No es un array de strings
+            }
+
+            // Si llegamos aquí, no se pudo deserializar en ningún formato
+            return new List<int>();
         }
 
+        // ============================
+        // 3. COMPRAR UNA SKIN
+        // ============================
+        public async Task<bool> PurchaseSkinAsync(int usuarioId, int skinId)
+        {
+            var response = await _httpClient.PostAsync($"api/userskins/purchase/{usuarioId}/{skinId}", null);
+            return response.IsSuccessStatusCode;
+        }
+
+        // ============================
+        // 4. ACTIVAR UNA SKIN
+        // ============================
+        public async Task<bool> ActivateSkinAsync(int usuarioId, int skinId, string tipo)
+        {
+            var response = await _httpClient.PostAsync($"api/userskins/activate/{usuarioId}/{skinId}/{tipo}", null);
+            return response.IsSuccessStatusCode;
+        }
     }
 }

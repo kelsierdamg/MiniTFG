@@ -10,9 +10,11 @@ namespace MiniTFG
         public event PropertyChangedEventHandler PropertyChanged;
         void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string name = null)
             => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-        public string Id { get; set; }
-        public string Image { get; set; }
+        public int Id { get; set; }
+        public string Nombre { get; set; }
+        public string Imagen { get; set; }
         public int Precio { get; set; }
+        public bool Activo { get; set; }
         private bool _comprado;
         public bool Comprado
         {
