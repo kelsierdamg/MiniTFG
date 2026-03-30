@@ -50,16 +50,16 @@ public partial class ProfilePage : ContentPage
 
         if (lista == null)
             return;
+
         MisRecetas.Clear();
-        foreach (var mia in lista)
+        foreach (var mia in lista.Where(r => r.UsuarioId == App.UsuarioActual.Id))
         {
-            if (mia.UsuarioId == App.UsuarioActual.Id)
-                if (!string.IsNullOrEmpty(mia.Imagen))
-                {
-                    byte[] bytes = Convert.FromBase64String(mia.Imagen);
-                    mia.Imagen = null; // evitamos usar el string enorme como Source
-                    mia.ImagenSource = ImageSource.FromStream(() => new MemoryStream(bytes));
-                }
+            if (!string.IsNullOrEmpty(mia.Imagen))
+            {
+                byte[] bytes = Convert.FromBase64String(mia.Imagen);
+                mia.Imagen = null;
+                mia.ImagenSource = ImageSource.FromStream(() => new MemoryStream(bytes));
+            }
             MisRecetas.Add(mia);
         }
     }

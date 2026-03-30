@@ -15,7 +15,8 @@
                     VerticalOptions="Center">
                 <SearchBar Placeholder="Buscar..."
                            TextChanged="OnSearchTextChanged"
-                           BackgroundColor="Transparent"
+                           TextColor="White"
+                           BackgroundColor="#7A1CCF"
                            FontSize="18" />
             </Border>
         </Grid>
@@ -24,13 +25,13 @@
             <CollectionView.ItemTemplate>
                 <DataTemplate>
                     <Border StrokeThickness="0" BackgroundColor="#9C40F7" StrokeShape="RoundRectangle 15" Padding="10" Margin="20,20" HeightRequest="240">
-                        <Grid ColumnDefinitions="Auto, *">
+                        <Grid ColumnDefinitions="Auto, *" RowDefinitions="Auto, *">
                             <StackLayout Orientation="Horizontal" Spacing="10" Grid.Row="0">
-                                <Image Source="{Binding CreadorFoto}"
-                                       HeightRequest="20"
-                                       WidthRequest="20"
+                                <Image Source="{Binding CreadorFotoSource}"
+                                       HeightRequest="40"
+                                       WidthRequest="40"
                                        Aspect="AspectFill"
-                                       Clip="EllipseGeometry Center=20,20 RadiusX=20 RadiusY=20"/>
+                                       Clip="EllipseGeometry Center=10,10 RadiusX=10 RadiusY=10"/>
                                 <Button Text="{Binding CreadorNombre}"
                                         CommandParameter="{Binding UsuarioId}"
                                         BackgroundColor="Transparent"
@@ -38,13 +39,15 @@
                                         FontAttributes="Bold"
                                         Clicked="OnCreatorClicked"/>
                             </StackLayout>
-                            
+
                             <Image Source="{Binding ImagenSource}"
+                                   Grid.Row="1"
+                                   Grid.Column="0"
                                    Aspect="AspectFill"
-                                   HeightRequest="100"
-                                   WidthRequest="100" />
-                            
-                            <VerticalStackLayout Grid.Column="1" Padding="10,0" Spacing="4">
+                                   HeightRequest="140"
+                                   WidthRequest="140" />
+
+                            <VerticalStackLayout Grid.Row="1" Grid.Column="1" Padding="10,0" Spacing="4">
                                 <Label Text="{Binding Titulo}" FontAttributes="Bold" TextColor="White" FontSize="18" />
                                 <Label Text="{Binding Comensales, StringFormat='Comensales: {0}'}" TextColor="White"/>
                                 <Label Text="{Binding TiempoPreparacion, StringFormat='Tiempo: {0} min'}" TextColor="White" />

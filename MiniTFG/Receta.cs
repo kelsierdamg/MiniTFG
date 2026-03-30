@@ -92,6 +92,7 @@ namespace MiniTFG
                 {
                     _creadorFoto = value;
                     OnPropertyChanged(nameof(CreadorFoto));
+                    OnPropertyChanged(nameof(CreadorFotoSource)); // ⭐ FALTABA ESTO
                 }
             }
         }
@@ -102,15 +103,12 @@ namespace MiniTFG
             get
             {
                 if (string.IsNullOrWhiteSpace(CreadorFoto))
-                    return "userdefault.png"; // una imagen local por defecto
+                    return "userdefault.png"; // imagen local por defecto
 
-                // Si NO es una URL válida, devolvemos imagen por defecto
-                if (!Uri.TryCreate(CreadorFoto, UriKind.Absolute, out var uri))
-                    return "userdefault.png";
-
-                return ImageSource.FromUri(uri);
+                return ImageSource.FromFile(CreadorFoto);
             }
         }
+
 
         public int Comensales { get; set; }
         public string OrigenDelPlato { get; set; }
