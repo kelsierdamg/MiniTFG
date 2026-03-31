@@ -35,10 +35,7 @@ public partial class HomePage : ContentPage
         var button = sender as Button;
         int creadorId = (int)button.CommandParameter;
 
-        var api = new ApiService();
-        var usuario = await api.GetUsuarioByIdAsync(creadorId);
-
-        await Shell.Current.GoToAsync("other");
+        await Shell.Current.GoToAsync($"other?usuarioId={creadorId}");
     }
 
 
@@ -98,6 +95,7 @@ public partial class HomePage : ContentPage
             var creador = await api.GetUsuarioByIdAsync(r.UsuarioId);
             r.CreadorNombre = creador.Nombre;
             r.CreadorFoto = creador.Foto;
+            r.CreadorFotoSource = await api.GetImageSourceAsync(creador.Foto, "userdefault.png");
         }
 
         TodasLasRecetas = lista.ToList();

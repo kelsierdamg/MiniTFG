@@ -42,6 +42,46 @@ namespace MiniTFG
             public int SkinId { get; set; }
         }
 
+        // ------------------ IMÁGENES ------------------
+
+        /// <summary>
+        /// Descarga una imagen desde una URL del servidor (reescribiendo localhost para el emulador)
+        /// y devuelve un ImageSource. Si el valor es un nombre de archivo local, lo devuelve directamente.
+        /// </summary>
+        public async Task<ImageSource> GetImageSourceAsync(string urlOrFile, string porDefecto = null)
+        {
+            if (string.IsNullOrWhiteSpace(urlOrFile))
+                return porDefecto != null ? ImageSource.FromFile(porDefecto) : null;
+
+            // Si no parece una URL, tratar como nombre de archivo local (ej: skins)
+            if (!urlOrFile.Contains("://") && !urlOrFile.StartsWith('/'))
+                return ImageSource.FromFile(urlOrFile);
+
+            try
+            {
+                // Reescribir localhost → 10.0.2.2 para el emulador Android
+                string url = urlOrFile;
+#if DEBUG
+                url = url.Replace("://localhost", "://10.0.2.2");
+#endif
+                // Descargar bytes con el HttpClient que tiene bypass SSL
+                byte[] bytes;
+                if (url.StartsWith('/'))
+                    bytes = await _httpClient.GetByteArrayAsync(url.TrimStart('/'));
+                else
+                    bytes = await _httpClient.GetByteArrayAsync(url);
+
+                // Guardar en archivo de caché para evitar que desaparezca con StreamImageSource
+                string cacheFile = System.IO.Path.Combine(FileSystem.CacheDirectory, $"img_{Guid.NewGuid():N}.tmp");
+                await File.WriteAllBytesAsync(cacheFile, bytes);
+                return ImageSource.FromFile(cacheFile);
+            }
+            catch
+            {
+                return porDefecto != null ? ImageSource.FromFile(porDefecto) : null;
+            }
+        }
+
         // ------------------ USUARIOS ------------------
 
         public async Task<Usuario[]> GetUsuariosAsync()

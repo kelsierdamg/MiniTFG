@@ -10,12 +10,13 @@
               Grid.Row="0">
             <Border StrokeThickness="0"
                     StrokeShape="RoundRectangle 20"
-                    BackgroundColor="#EEEEEE"
+                    BackgroundColor="#7A1CCF"
                     HeightRequest="40"
                     VerticalOptions="Center">
                 <SearchBar Placeholder="Buscar..."
                            TextChanged="OnSearchTextChanged"
                            TextColor="White"
+                           PlaceholderColor="White"
                            BackgroundColor="#7A1CCF"
                            FontSize="18" />
             </Border>

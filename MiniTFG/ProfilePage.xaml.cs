@@ -8,13 +8,12 @@ public partial class ProfilePage : ContentPage
     public ObservableCollection<Receta> MisRecetas { get; set; } = new();
     double lastScrollY = 0;
     bool isBarHidden = false;
-    public ProfilePage()
+	public ProfilePage()
 	{
 		InitializeComponent();
-        UsernameLabel.BindingContext = App.UsuarioActual;
-        ListaMisRecetas.BindingContext = this;
-        CargarRecetas();
-    }
+		UsernameLabel.BindingContext = App.UsuarioActual;
+		ListaMisRecetas.BindingContext = this;
+	}
 
     protected override async void OnAppearing()
     {
@@ -22,11 +21,15 @@ public partial class ProfilePage : ContentPage
 
         var api = new ApiService();
         App.UsuarioActual = await api.GetUsuarioByIdAsync(App.UsuarioActual.Id);
-
-        ProfileImage.Source = App.UsuarioActual.Foto;
-        BannerImage.Source = App.UsuarioActual.Banner;
+        UsernameLabel.BindingContext = App.UsuarioActual;
         MostrarEstrellas(App.UsuarioActual.ValoracionMedia);
 
+        // Cargar recetas primero (provoca cambios de layout en la CollectionView)
+        await CargarRecetas();
+
+        // Poner imágenes AL FINAL, después de que el layout esté estable
+        ProfileImage.Source = await api.GetImageSourceAsync(App.UsuarioActual.Foto, "profile_default.png");
+        BannerImage.Source = await api.GetImageSourceAsync(App.UsuarioActual.Banner, "banner_default.png");
     }
 
     private async void InicioClicked(object sender, EventArgs e)
@@ -43,7 +46,7 @@ public partial class ProfilePage : ContentPage
 		await Shell.Current.GoToAsync("shop");
     }
 
-    private async void CargarRecetas()
+    private async Task CargarRecetas()
     {
         var api = new ApiService();
         var lista = await api.GetRecetasAsync();

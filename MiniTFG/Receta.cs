@@ -92,20 +92,19 @@ namespace MiniTFG
                 {
                     _creadorFoto = value;
                     OnPropertyChanged(nameof(CreadorFoto));
-                    OnPropertyChanged(nameof(CreadorFotoSource)); // ⭐ FALTABA ESTO
                 }
             }
         }
 
+        private ImageSource _creadorFotoSource;
         [JsonIgnore]
         public ImageSource CreadorFotoSource
         {
-            get
+            get => _creadorFotoSource ?? "userdefault.png";
+            set
             {
-                if (string.IsNullOrWhiteSpace(CreadorFoto))
-                    return "userdefault.png"; // imagen local por defecto
-
-                return ImageSource.FromFile(CreadorFoto);
+                _creadorFotoSource = value;
+                OnPropertyChanged(nameof(CreadorFotoSource));
             }
         }
 

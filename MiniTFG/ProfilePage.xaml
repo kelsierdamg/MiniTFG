@@ -88,17 +88,20 @@
             <Button Grid.Column="0"
                     Text="Inicio"
                     ImageSource="home.png"
+                    TextColor="Black"
                     BackgroundColor="#9C40F7"
                     Clicked="InicioClicked" />
 
             <Button Grid.Column="1"
                     Text="Recetas"
+                    TextColor="Black"
                     ImageSource="recipes.png"
                     BackgroundColor="#9C40F7"
                     Clicked="RecetasClicked" />
 
             <Button Grid.Column="2"
                     Text="Perfil"
+                    TextColor="Black"
                     ImageSource="user.png"
                     BackgroundColor="#9C40F7"
                     Clicked="PerfilClicked" />
