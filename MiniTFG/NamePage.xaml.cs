@@ -30,7 +30,7 @@ public partial class NamePage : ContentPage
         }
         else
         {
-            App.UsuarioTemporal = new Usuario
+            App.UsuarioTemporal = new Usuario // Este usuario temporal se usará para almacenar los datos introducidos en esta página y luego se completará con los datos de las alergias en la siguiente página
             {
                 Nombre = nameEntry.Text,
                 Correo = emailEntry.Text,

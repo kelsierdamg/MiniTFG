@@ -39,12 +39,20 @@
 
                 <HorizontalStackLayout x:Name="EstrellasContainer" Spacing="4" HorizontalOptions="Center" />
 
-                <Button Text="Tienda de skins"
-                        BackgroundColor="#9C40F7"
-                        TextColor="White"
-                        CornerRadius="15"
-                        HeightRequest="50"
-                        Clicked="AbrirTiendaClicked" />
+                <HorizontalStackLayout>
+                    <Button Text="Tienda de skins"
+                            BackgroundColor="#9C40F7"
+                            TextColor="White"
+                            CornerRadius="15"
+                            HeightRequest="50"
+                            Clicked="AbrirTiendaClicked" />
+                    <Button Text="Ajustes"
+                            BackgroundColor="#9C40F7"
+                            TextColor="White"
+                            CornerRadius="15"
+                            HeightRequest="50"
+                            Clicked="AbrirAjustesClicked" />
+                </HorizontalStackLayout>
                 
                 <Label Text="Mis recetas"
                        FontSize="20"

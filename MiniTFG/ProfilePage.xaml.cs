@@ -6,8 +6,6 @@ namespace MiniTFG;
 public partial class ProfilePage : ContentPage
 {
     public ObservableCollection<Receta> MisRecetas { get; set; } = new();
-    double lastScrollY = 0;
-    bool isBarHidden = false;
 	public ProfilePage()
 	{
 		InitializeComponent();
@@ -21,6 +19,8 @@ public partial class ProfilePage : ContentPage
 
         var api = new ApiService();
         App.UsuarioActual = await api.GetUsuarioByIdAsync(App.UsuarioActual.Id);
+
+        // Aquí hace binding con el usuario (mirar el xaml)
         UsernameLabel.BindingContext = App.UsuarioActual;
         MostrarEstrellas(App.UsuarioActual.ValoracionMedia);
 
@@ -46,8 +46,14 @@ public partial class ProfilePage : ContentPage
 		await Shell.Current.GoToAsync("shop");
     }
 
+    private async void AbrirAjustesClicked(object sender, EventArgs e)
+    {
+        await Shell.Current.GoToAsync("settings");
+    }
+
     private async Task CargarRecetas()
     {
+        // Solo se cargan las recetas de este usuario, como siempre sustituye las referencias a la api por los metodos de tu bbdd
         var api = new ApiService();
         var lista = await api.GetRecetasAsync();
 
@@ -69,6 +75,7 @@ public partial class ProfilePage : ContentPage
 
     private Grid CrearEstrella(double porcentaje)
     {
+        // Recomiendo tocar esto lo menos posible
         const double STAR_SIZE = 30; // Debe coincidir con WidthRequest/HeightRequest
         
         var grid = new Grid
@@ -102,6 +109,7 @@ public partial class ProfilePage : ContentPage
 
     private void MostrarEstrellas(double media)
     {
+        // Esto igual, no lo toques mucho. Carga las estrellas según la valoración media del usuario, con decimales para mostrar estrellas a medias. Revisa la clase StarRatingPopup para ver como se calcula la valoración media a partir de las valoraciones individuales.
         EstrellasContainer.Children.Clear();
 
         for (int i = 1; i <= 5; i++)

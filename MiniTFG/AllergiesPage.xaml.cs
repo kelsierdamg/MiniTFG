@@ -31,7 +31,7 @@ public partial class AllergiesPage : ContentPage
 
 	private async void NextClicked(object sender, EventArgs e)
 	{
-        foreach (var item in Alergenos)
+        foreach (var item in Alergenos) // Recorremos la lista de alérgenos y rellenamos las propiedades del usuario temporal según la selección
         {
             switch (item.Nombre)
             {

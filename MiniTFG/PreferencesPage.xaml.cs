@@ -18,8 +18,8 @@ public partial class PreferencesPage : ContentPage
 
 	private async void FinishClicked(object sender, EventArgs e)
 	{
-		foreach (var item in Preferencias)
-		{
+		foreach (var item in Preferencias) // Recorremos las preferencias para asignarlas al usuario temporal
+        {
 			switch (item.Nombre)
 			{
 				case "Vegetariano":
@@ -31,6 +31,7 @@ public partial class PreferencesPage : ContentPage
 			}
         }
 
+        // De nuevo aquí uso mi api, cambialo por los métodos de tu bbdd
         var api = new ApiService();
 
         var creado = await api.PostUsuarioAsync(App.UsuarioTemporal);
@@ -52,7 +53,7 @@ public partial class PreferencesPage : ContentPage
             return;
         }
 
-        App.UsuarioActual = usuarioLogueado;
+        App.UsuarioActual = usuarioLogueado; // Asignamos el usuario logueado a la variable global
 
         await Shell.Current.GoToAsync("//home");
     }

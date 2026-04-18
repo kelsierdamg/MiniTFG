@@ -11,6 +11,12 @@
             Routing.RegisterRoute("preferences", typeof(PreferencesPage));
             Routing.RegisterRoute("shop", typeof(ShopPage));
             Routing.RegisterRoute("other", typeof(OtherProfilePage));
+            Routing.RegisterRoute("settings", typeof(SettingsPage));
+            Routing.RegisterRoute("updateusername", typeof(UpdateUsernamePage));
+            Routing.RegisterRoute("updateemail", typeof(UpdateEmailPage));
+            Routing.RegisterRoute("updatepassword", typeof(UpdatePasswordPage));
+            Routing.RegisterRoute("updatepreferences", typeof(UpdatePreferencesPage));
+            Routing.RegisterRoute("recipesteps", typeof(RecipeStepsPage));
         }
     }
 }

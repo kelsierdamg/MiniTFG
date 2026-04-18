@@ -26,6 +26,10 @@
                             Clicked="SeleccionarImagenClicked" />
                 </VerticalStackLayout>
 
+                <Entry x:Name="DescripcionEntry"
+                       Placeholder="Descripción del plato"
+                       FontSize="18" />
+
                 <Entry x:Name="ComensalesEntry"
                        Placeholder="Comensales (ej: 4)"
                        FontSize="18"
@@ -76,6 +80,16 @@
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
                 </CollectionView>
+
+                <Label Text="Pasos de la receta (vídeos)" FontAttributes="Bold" FontSize="18" />
+
+                <VerticalStackLayout x:Name="PasosContainer" Spacing="10" />
+
+                <Button Text="Añadir paso"
+                        BackgroundColor="#7A1CCF"
+                        TextColor="White"
+                        CornerRadius="10"
+                        Clicked="AgregarPasoClicked" />
 
                 <Button Text="Guardar receta"
                         BackgroundColor="#9C40F7"

@@ -141,6 +141,24 @@ namespace MiniTFG
             return response.IsSuccessStatusCode;
         }
 
+        // ------------------ PASOS RECETA ------------------
+
+        public async Task<List<PasoReceta>> GetPasosRecetaAsync(int recetaId)
+        {
+            var response = await _httpClient.GetAsync($"api/PasosReceta/receta/{recetaId}");
+            if (!response.IsSuccessStatusCode)
+                return new List<PasoReceta>();
+            var json = await response.Content.ReadAsStringAsync();
+            return JsonSerializer.Deserialize<List<PasoReceta>>(json, _options) ?? new List<PasoReceta>();
+        }
+
+        public async Task<PasoReceta> PostPasoRecetaAsync(PasoReceta paso)
+        {
+            var response = await _httpClient.PostAsJsonAsync("api/PasosReceta", paso);
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadFromJsonAsync<PasoReceta>();
+        }
+
         // ------------------ LIKES ------------------
 
         public async Task<Like> PostLikeAsync(Like like)

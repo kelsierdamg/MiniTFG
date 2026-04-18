@@ -20,9 +20,6 @@ public partial class HomePage : ContentPage
     private HashSet<int> _likesUsuario = new();
     private HashSet<int> _usuariosValorados = new();
 
-    double lastScrollY = 0;
-    bool isBarHidden = false;
-
     public HomePage()
     {
         InitializeComponent();
@@ -32,6 +29,7 @@ public partial class HomePage : ContentPage
 
     private async void OnCreatorClicked(object sender, EventArgs e)
     {
+        // Aquí se navega a la página del creador de la receta cuando pulsas en su nombre, pasando su id por query parameter
         var button = sender as Button;
         int creadorId = (int)button.CommandParameter;
 
@@ -41,6 +39,7 @@ public partial class HomePage : ContentPage
 
     private List<Receta> FiltrarPorPreferencias(List<Receta> recetas, Usuario usuario)
     {
+        // Aquí se filtran todas las recetas que salen en el inicio según las preferencias
         var filtradas = recetas.AsEnumerable();
 
         if (usuario.Gluten) filtradas = filtradas.Where(r => !r.Gluten);
@@ -58,7 +57,6 @@ public partial class HomePage : ContentPage
         if (usuario.Moluscos) filtradas = filtradas.Where(r => !r.Moluscos);
         if (usuario.Apio) filtradas = filtradas.Where(r => !r.Apio);
 
-        // Preferencias dietéticas
         if (usuario.Vegano) filtradas = filtradas.Where(r => r.Vegano);
         else if (usuario.Vegetariano) filtradas = filtradas.Where(r => r.Vegetariano);
 
@@ -67,6 +65,7 @@ public partial class HomePage : ContentPage
 
     private void OnSearchTextChanged(object sender, TextChangedEventArgs e)
     {
+        // Si el usuario borra el texto, se muestra la lista base filtrada por preferencias (si hay usuario) o todas las recetas si no hay usuario. Si hay texto, se filtra esa lista base por título de receta.
         var texto = e.NewTextValue?.Trim() ?? string.Empty;
 
         var baseList = RecetasFiltradasBase ?? new List<Receta>();
@@ -74,7 +73,6 @@ public partial class HomePage : ContentPage
             ? baseList
             : baseList.Where(r => r.Titulo != null && r.Titulo.Contains(texto, StringComparison.OrdinalIgnoreCase)).ToList();
 
-        // actualizar ObservableCollection de forma eficiente
         Recetas.Clear();
         foreach (var r in resultado)
             Recetas.Add(r);
@@ -160,6 +158,8 @@ public partial class HomePage : ContentPage
 
     private async void LikeClicked(object sender, EventArgs e)
     {
+        // Aquí se maneja el click en el icono de like. Se hace un toggle: si no ha dado like, se intenta dar like; si ya había dado like, se intenta quitarlo. En ambos casos se actualiza la UI de forma optimista y se maneja cualquier error re-sincronizando los likes desde el servidor para mantener la consistencia.
+        // Bueno lo anterior lo ha escrito Copilot, yo no sé como funciona pero es para los likes
         var api = new ApiService();
         var img = (Image)sender;
         var receta = (Receta)img.BindingContext;
@@ -224,6 +224,7 @@ public partial class HomePage : ContentPage
 
     private async void PuntuarClicked(object sender, EventArgs e)
     {
+        // Aquí se maneja el click en el icono de valoración (estrellas). Se abre un popup para seleccionar la cantidad de estrellas, y luego se envía esa valoración al servidor. Al igual que con los likes, se actualiza la UI de forma optimista y se maneja cualquier error re-sincronizando las valoraciones desde el servidor.
         var img = (Image)sender;
         var receta = (Receta)img.BindingContext;
 
@@ -260,6 +261,20 @@ public partial class HomePage : ContentPage
         }
     }
 
+    private async void OnRecetaTapped(object sender, EventArgs e)
+    {
+        var border = (Border)sender;
+        var receta = (Receta)border.BindingContext;
+
+        var popup = new RecipeDetailPopup(receta);
+        var resultado = await this.ShowPopupAsync(popup);
+
+        if (resultado is int recetaId)
+        {
+            await Shell.Current.GoToAsync($"recipesteps?recetaId={recetaId}");
+        }
+    }
+
     private async void RecetasClicked(object sender, EventArgs e)
     {
         await Shell.Current.GoToAsync("//recipes");
@@ -267,6 +282,7 @@ public partial class HomePage : ContentPage
 
     private async void PerfilClicked(object sender, EventArgs e)
     {
+        // Aquí se maneja el click en el botón de perfil. Si no hay usuario logueado, se muestra un mensaje y se ofrece ir a la página de login. Si ya hay usuario, se navega directamente al perfil.
         if (App.UsuarioActual == null)
         {
             bool irLogin = await DisplayAlertAsync(

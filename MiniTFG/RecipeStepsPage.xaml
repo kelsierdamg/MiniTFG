@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MiniTFG.RecipeStepsPage"
+             Title="Pasos de la receta"
+             BackgroundColor="#1E1E1E">
+
+    <Grid RowDefinitions="Auto,*">
+
+        <Label x:Name="TituloLabel"
+               Grid.Row="0"
+               FontSize="24"
+               FontAttributes="Bold"
+               TextColor="White"
+               HorizontalOptions="Center"
+               Margin="0,15" />
+
+        <CarouselView x:Name="PasosCarousel"
+                      Grid.Row="1"
+                      Loop="False"
+                      IndicatorView="indicatorView">
+            <CarouselView.ItemTemplate>
+                <DataTemplate>
+                    <VerticalStackLayout Padding="20" Spacing="15" VerticalOptions="Center">
+                        <Label Text="{Binding NumeroPaso, StringFormat='Paso {0}'}"
+                               FontSize="20"
+                               TextColor="#9C40F7"
+                               FontAttributes="Bold"
+                               HorizontalOptions="Center" />
+
+                        <Label Text="{Binding Descripcion}"
+                               FontSize="18"
+                               TextColor="White"
+                               HorizontalOptions="Center" />
+
+                        <Border StrokeThickness="0"
+                                StrokeShape="RoundRectangle 15"
+                                BackgroundColor="#333333"
+                                HeightRequest="250"
+                                HorizontalOptions="Center"
+                                WidthRequest="300">
+                            <Grid>
+                                <Label Text="▶ Reproducir vídeo"
+                                       FontSize="20"
+                                       TextColor="White"
+                                       HorizontalOptions="Center"
+                                       VerticalOptions="Center" />
+                                <Grid.GestureRecognizers>
+                                    <TapGestureRecognizer Tapped="OnVideoTapped" />
+                                </Grid.GestureRecognizers>
+                            </Grid>
+                        </Border>
+                    </VerticalStackLayout>
+                </DataTemplate>
+            </CarouselView.ItemTemplate>
+        </CarouselView>
+
+        <IndicatorView x:Name="indicatorView"
+                       Grid.Row="1"
+                       VerticalOptions="End"
+                       HorizontalOptions="Center"
+                       IndicatorColor="Gray"
+                       SelectedIndicatorColor="#9C40F7"
+                       Margin="0,0,0,20" />
+    </Grid>
+</ContentPage>

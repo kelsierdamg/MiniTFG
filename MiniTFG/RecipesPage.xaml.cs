@@ -9,6 +9,8 @@ public partial class RecipesPage : ContentPage
     double lastScrollY = 0;
     bool isBarHidden = false;
     private string imagenBase64 = null;
+    private List<PasoReceta> _pasos = new();
+    private int _contadorPasos = 0;
     public RecipesPage()
 	{
 		InitializeComponent();
@@ -114,6 +116,77 @@ public partial class RecipesPage : ContentPage
         }
     }
 
+    private async void AgregarPasoClicked(object sender, EventArgs e)
+    {
+        _contadorPasos++;
+        int numeroPaso = _contadorPasos;
+
+        var paso = new PasoReceta { NumeroPaso = numeroPaso };
+        _pasos.Add(paso);
+
+        var pasoLayout = new VerticalStackLayout { Spacing = 5, Padding = new Thickness(0, 5) };
+
+        var label = new Label
+        {
+            Text = $"Paso {numeroPaso}",
+            FontAttributes = FontAttributes.Bold,
+            FontSize = 16
+        };
+
+        var descripcionEntry = new Entry
+        {
+            Placeholder = $"Descripción del paso {numeroPaso}",
+            FontSize = 16
+        };
+        descripcionEntry.TextChanged += (s, args) => paso.Descripcion = args.NewTextValue;
+
+        var videoLabel = new Label
+        {
+            Text = "Sin vídeo seleccionado",
+            FontSize = 14,
+            TextColor = Colors.Gray
+        };
+
+        var videoButton = new Button
+        {
+            Text = "Seleccionar vídeo",
+            BackgroundColor = Color.FromArgb("#9C40F7"),
+            TextColor = Colors.White,
+            CornerRadius = 8
+        };
+        videoButton.Clicked += async (s, args) =>
+        {
+            try
+            {
+                var result = await FilePicker.PickAsync(new PickOptions
+                {
+                    PickerTitle = $"Selecciona el vídeo del paso {numeroPaso}",
+                    FileTypes = FilePickerFileType.Videos
+                });
+
+                if (result != null)
+                {
+                    using var stream = await result.OpenReadAsync();
+                    using var ms = new MemoryStream();
+                    await stream.CopyToAsync(ms);
+                    paso.Video = Convert.ToBase64String(ms.ToArray());
+                    videoLabel.Text = result.FileName;
+                }
+            }
+            catch
+            {
+                await DisplayAlertAsync("Error", "No se pudo seleccionar el vídeo", "OK");
+            }
+        };
+
+        pasoLayout.Children.Add(label);
+        pasoLayout.Children.Add(descripcionEntry);
+        pasoLayout.Children.Add(videoButton);
+        pasoLayout.Children.Add(videoLabel);
+
+        PasosContainer.Children.Add(pasoLayout);
+    }
+
     private async void GuardarRecetaClicked(object sender, EventArgs e)
     {
         if (App.UsuarioActual == null)
@@ -122,11 +195,14 @@ public partial class RecipesPage : ContentPage
             return;
         }
 
+        // Como siempre, borra las referencias a la api y pon tus métodos
+        // Aquí rellenamos el objeto Receta con los datos del formulario
         var receta = new Receta
         {
             UsuarioId = App.UsuarioActual.Id,
             Titulo = NombreEntry.Text,
             Imagen = imagenBase64,
+            Descripcion = DescripcionEntry.Text,
             Comensales = int.Parse(ComensalesEntry.Text),
             OrigenDelPlato = OrigenEntry.Text,
             TiempoPreparacion = TiempoEntry.Text,
@@ -134,6 +210,7 @@ public partial class RecipesPage : ContentPage
             IngredientePrincipal = MainIngredientEntry.Text
         };
 
+        // Asignamos los alérgenos y preferencias seleccionados
         foreach (var alergeno in Alergenos)
         {
             switch (alergeno.Nombre)
@@ -204,6 +281,16 @@ public partial class RecipesPage : ContentPage
             await DisplayAlertAsync("Error", "No se pudo guardar la receta.", "OK");
             return;
         }
+
+        foreach (var paso in _pasos)
+        {
+            paso.RecetaId = creada.Id;
+            await api.PostPasoRecetaAsync(paso);
+        }
+
+        _pasos.Clear();
+        _contadorPasos = 0;
+        PasosContainer.Children.Clear();
 
         await DisplayAlertAsync("Éxito", "Receta creada correctamente.", "OK");
     }

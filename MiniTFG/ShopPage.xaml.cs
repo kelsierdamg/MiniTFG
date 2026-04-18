@@ -26,12 +26,11 @@ public partial class ShopPage : ContentPage, INotifyPropertyChanged
         }
     }
 
-    public ShopPage()
+	public ShopPage()
 	{
 		InitializeComponent();
-        BindingContext = this;
-        CargarLikesTotales();
-    }
+		BindingContext = this;
+	}
 
     protected override async void OnAppearing()
     {
@@ -59,7 +58,19 @@ public partial class ShopPage : ContentPage, INotifyPropertyChanged
         foreach (var s in skins)
             s.Comprado = ownedSet.Contains(s.Id);
 
-        // 5. Pintar en pantalla
+        // 5. Calcular likes disponibles = recibidos - gastados en skins
+        var likesRecibidos = await api.GetLikesUsuarioAsync(App.UsuarioActual.Id);
+        int totalRecibidos = likesRecibidos.Count();
+
+        int gastados = owned
+            .Select(skinId => skins.FirstOrDefault(s => s.Id == skinId))
+            .Where(s => s != null)
+            .Sum(s => s.Precio);
+
+        LikesTotales = Math.Max(0, totalRecibidos - gastados);
+        LikesLabel.Text = $"Likes: {LikesTotales}";
+
+        // 6. Pintar en pantalla
         BannersContainer.Children.Clear();
         foreach (var b in banners)
             BannersContainer.Children.Add(CrearItemSkin(b, true));
@@ -67,24 +78,6 @@ public partial class ShopPage : ContentPage, INotifyPropertyChanged
         FotosContainer.Children.Clear();
         foreach (var f in fotos)
             FotosContainer.Children.Add(CrearItemSkin(f, false));
-    }
-
-    private async void CargarLikesTotales()
-    {
-        int usuarioId = App.UsuarioActual?.Id ?? 0;
-
-        if (usuarioId == 0)
-        {
-            LikesTotales = 0;
-            LikesLabel.Text = "0"; // o lo que uses en XAML
-            return;
-        }
-
-        var api = new ApiService();
-        var likesUsuario = await api.GetLikesUsuarioAsync(usuarioId);
-
-        LikesTotales = likesUsuario.Count();
-        LikesLabel.Text = $"Likes: {LikesTotales}";
     }
 
     private View CrearItemSkin(Skin skin, bool esBanner)

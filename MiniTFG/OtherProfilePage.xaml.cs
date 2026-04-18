@@ -46,7 +46,8 @@ public partial class OtherProfilePage : ContentPage
 
 	private async Task CargarRecetas(ApiService api, int usuarioId)
 	{
-		var lista = await api.GetRecetasAsync();
+        // Este metodo es igual al de ProfilePage
+        var lista = await api.GetRecetasAsync();
 
 		if (lista == null)
 			return;
@@ -64,6 +65,7 @@ public partial class OtherProfilePage : ContentPage
 		}
 	}
 
+	// Estos dos metodos son iguales a los de ProfilePage
 	private Grid CrearEstrella(double porcentaje)
 	{
 		const double STAR_SIZE = 30;

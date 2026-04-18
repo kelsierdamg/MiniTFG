@@ -9,6 +9,7 @@ public partial class LoginPage : ContentPage
 
 	private async void SessionClicked(object sender, EventArgs e)
 	{
+		// Asier, borra esto y hazlo con tu base de datos. Este botón es para iniciar sesión
 		var api = new ApiService();
 
         if (string.IsNullOrWhiteSpace(emailEntry.Text) || string.IsNullOrWhiteSpace(passwordEntry.Text))
@@ -21,7 +22,7 @@ public partial class LoginPage : ContentPage
 
 		if (usuario != null)
 		{
-            App.UsuarioActual = usuario;
+            App.UsuarioActual = usuario; // No borres esto, es para guardar el usuario actual en la aplicación (usuario rellenalo con los datos que te da tu base de datos)
             if (chkRemember.IsChecked)
 			{
 				Preferences.Set("userId", usuario.Id);
