@@ -14,7 +14,25 @@ namespace MiniTFG
 
         protected override Window CreateWindow(IActivationState? activationState)
         {
-            return new Window(new AppShell());
+            var shell = new AppShell();
+
+            int savedUserId = Preferences.Get("userId", 0);
+            if (savedUserId != 0)
+            {
+                UsuarioActual = new Usuario
+                {
+                    Id = savedUserId,
+                    Nombre = Preferences.Get("userName", string.Empty),
+                    Correo = Preferences.Get("userCorreo", string.Empty)
+                };
+
+                shell.Dispatcher.Dispatch(async () =>
+                {
+                    await Shell.Current.GoToAsync("//home");
+                });
+            }
+
+            return new Window(shell);
         }
     }
 }

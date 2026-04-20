@@ -32,9 +32,12 @@ public partial class SettingsPage : ContentPage
 		var answer = await DisplayAlertAsync("Cerrar sesión", "¿Estás seguro de que deseas cerrar sesión?", "Sí", "No");
 		if (answer)
 		{
+			Preferences.Remove("userId");
+			Preferences.Remove("userName");
+			Preferences.Remove("userCorreo");
 			App.UsuarioActual = null;
-            App.UsuarioTemporal = null;
-            await Shell.Current.GoToAsync("//login");
+			App.UsuarioTemporal = null;
+			await Shell.Current.GoToAsync("//login");
 		}
     }
 }

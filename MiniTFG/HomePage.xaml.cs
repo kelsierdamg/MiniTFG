@@ -19,6 +19,7 @@ public partial class HomePage : ContentPage
     // almacena localmente los ids de recetas que el usuario ya ha marcado como like
     private HashSet<int> _likesUsuario = new();
     private HashSet<int> _usuariosValorados = new();
+    private bool _filtrosPreferenciasActivos = true;
 
     public HomePage()
     {
@@ -63,19 +64,113 @@ public partial class HomePage : ContentPage
         return filtradas.ToList();
     }
 
-    private void OnSearchTextChanged(object sender, TextChangedEventArgs e)
+    private void OnToggleFiltros(object sender, EventArgs e)
     {
-        // Si el usuario borra el texto, se muestra la lista base filtrada por preferencias (si hay usuario) o todas las recetas si no hay usuario. Si hay texto, se filtra esa lista base por título de receta.
-        var texto = e.NewTextValue?.Trim() ?? string.Empty;
+        PanelFiltros.IsVisible = !PanelFiltros.IsVisible;
+    }
 
-        var baseList = RecetasFiltradasBase ?? new List<Receta>();
-        var resultado = string.IsNullOrWhiteSpace(texto)
-            ? baseList
-            : baseList.Where(r => r.Titulo != null && r.Titulo.Contains(texto, StringComparison.OrdinalIgnoreCase)).ToList();
+    private void OnFiltroEntryCompleted(object sender, EventArgs e)
+    {
+        ActualizarTags();
+    }
+
+    private void ActualizarTags()
+    {
+        TagsLayout.Children.Clear();
+
+        var filtros = new (string Nombre, string Valor)[]
+        {
+            ("Comensales", EntryComensales.Text),
+            ("Origen", EntryOrigen.Text),
+            ("Tiempo", EntryTiempo.Text),
+            ("Cocina", EntryTipoCocina.Text),
+            ("Ingrediente", EntryIngrediente.Text)
+        };
+
+        foreach (var (nombre, valor) in filtros)
+        {
+            if (string.IsNullOrWhiteSpace(valor)) continue;
+
+            var tag = new Border
+            {
+                StrokeThickness = 0,
+                StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = 12 },
+                BackgroundColor = Color.FromArgb("#6A0DAD"),
+                Padding = new Thickness(10, 5),
+                Margin = new Thickness(2)
+            };
+
+            var label = new Label
+            {
+                Text = $"{nombre}: {valor.Trim()} ✕",
+                TextColor = Colors.White,
+                FontSize = 12
+            };
+
+            string nombreCaptura = nombre;
+            tag.GestureRecognizers.Add(new TapGestureRecognizer
+            {
+                Command = new Command(() =>
+                {
+                    switch (nombreCaptura)
+                    {
+                        case "Comensales": EntryComensales.Text = string.Empty; break;
+                        case "Origen": EntryOrigen.Text = string.Empty; break;
+                        case "Tiempo": EntryTiempo.Text = string.Empty; break;
+                        case "Cocina": EntryTipoCocina.Text = string.Empty; break;
+                        case "Ingrediente": EntryIngrediente.Text = string.Empty; break;
+                    }
+                    ActualizarTags();
+                    OnBuscarClicked(null, null);
+                })
+            });
+
+            tag.Content = label;
+            TagsLayout.Children.Add(tag);
+        }
+    }
+
+    private void OnBuscarClicked(object sender, EventArgs e)
+    {
+        var baseList = _filtrosPreferenciasActivos
+            ? (RecetasFiltradasBase ?? new List<Receta>())
+            : (TodasLasRecetas ?? new List<Receta>());
+
+        var resultado = baseList.AsEnumerable();
+
+        if (int.TryParse(EntryComensales.Text?.Trim(), out int comensales))
+            resultado = resultado.Where(r => r.Comensales == comensales);
+
+        if (!string.IsNullOrWhiteSpace(EntryOrigen.Text))
+            resultado = resultado.Where(r => r.OrigenDelPlato != null && r.OrigenDelPlato.Contains(EntryOrigen.Text.Trim(), StringComparison.OrdinalIgnoreCase));
+
+        if (!string.IsNullOrWhiteSpace(EntryTiempo.Text))
+            resultado = resultado.Where(r => r.TiempoPreparacion != null && r.TiempoPreparacion.Contains(EntryTiempo.Text.Trim(), StringComparison.OrdinalIgnoreCase));
+
+        if (!string.IsNullOrWhiteSpace(EntryTipoCocina.Text))
+            resultado = resultado.Where(r => r.TipoCocina != null && r.TipoCocina.Contains(EntryTipoCocina.Text.Trim(), StringComparison.OrdinalIgnoreCase));
+
+        if (!string.IsNullOrWhiteSpace(EntryIngrediente.Text))
+            resultado = resultado.Where(r => r.IngredientePrincipal != null && r.IngredientePrincipal.Contains(EntryIngrediente.Text.Trim(), StringComparison.OrdinalIgnoreCase));
 
         Recetas.Clear();
         foreach (var r in resultado)
             Recetas.Add(r);
+
+        ActualizarTags();
+    }
+
+    private void OnTogglePreferenciasClicked(object sender, EventArgs e)
+    {
+        _filtrosPreferenciasActivos = !_filtrosPreferenciasActivos;
+        BtnTogglePreferencias.Text = _filtrosPreferenciasActivos
+            ? "Desactivar filtros preferencias"
+            : "Activar filtros preferencias";
+        BtnTogglePreferencias.BackgroundColor = _filtrosPreferenciasActivos
+            ? Color.FromArgb("#444")
+            : Color.FromArgb("#6A0DAD");
+
+        OnBuscarClicked(null, null);
     }
 
     private async void CargarRecetas()
@@ -269,9 +364,9 @@ public partial class HomePage : ContentPage
         var popup = new RecipeDetailPopup(receta);
         var resultado = await this.ShowPopupAsync(popup);
 
-        if (resultado is int recetaId)
+        if (resultado is int[] ids && ids.Length == 2)
         {
-            await Shell.Current.GoToAsync($"recipesteps?recetaId={recetaId}");
+            await Shell.Current.GoToAsync($"recipesteps?recetaId={ids[0]}&usuarioId={ids[1]}");
         }
     }
 
